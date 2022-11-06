@@ -8,6 +8,7 @@ TagManager:
   - BlueTile
   - RedTile
   - Enemy
+  - Character
   layers:
   - Default
   - TransparentFX
