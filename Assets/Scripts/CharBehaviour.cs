@@ -27,15 +27,16 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("s") && turnStage == 0)
-        {
-            BoardTiles.ClearAllTiles();
-            ShowBlueTiles();
-            ShowRedTiles();
-        }
-
+        if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
         if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
         if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
+    }
+
+    private void ShowTiles()
+    {
+        BoardTiles.ClearAllTiles();
+        ShowBlueTiles();
+        ShowRedTiles();
     }
 
     private void Attack()
@@ -84,9 +85,7 @@ public class CharBehaviour : MonoBehaviour
             transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
             MoveAudioSource.Play();
             turnStage = 1;
-            BoardTiles.ClearAllTiles();
-            ShowBlueTiles();
-            ShowRedTiles();
+            ShowTiles();
         }
     }
 
