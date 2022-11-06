@@ -10,10 +10,10 @@ public class CharBehaviour : MonoBehaviour
 {
     private BoardTiles BoardTiles;
     private GameController GameController;
-    private int m = 5;
+    private int m = 20;
     private int r = 3;
 
-    private int hp = 100;
+    public int hp = 100;
     private int dmg = 10;
 
     public int turnStage = 0;
@@ -38,8 +38,6 @@ public class CharBehaviour : MonoBehaviour
         }
 
     }
-
-
 
     private void ShowTiles()
     {
@@ -77,17 +75,9 @@ public class CharBehaviour : MonoBehaviour
             && !EventSystem.current.IsPointerOverGameObject())
         {
 
-            BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<TrainingDummy>().hp -= dmg;
+            BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp -= dmg;
             HitAudioSource.Play();
             Wait();
-
-/*            BoardTiles.ClearAllTiles();
-            turnStage = 2;
-            if (GameController.CheckTurnOver())
-            {
-                GameController.turn++;
-                GameController.playerTurn = false;
-            }*/
 
         }
     }
