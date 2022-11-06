@@ -9,6 +9,7 @@ public class BoardTiles : MonoBehaviour
     public GameObject WhiteTilePrefab;
     public GameObject ClearTilePrefab;
 
+    //SloppyChief waz ere 2022
     //Methods:
     //Highlight hovered tile
 
