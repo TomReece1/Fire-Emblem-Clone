@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     private BoardTiles BoardTiles;
+    public GameObject TurnCounter;
+    public GameObject ActiveTeam;
 
     public int turn = 1;
     public bool playerTurn = true;
+
+
 
     // Start is called before the first frame update
     void Awake()
@@ -25,8 +30,14 @@ public class GameController : MonoBehaviour
     public void EndTurn()
     {
         BoardTiles.ClearAllTiles();
-        turn++;
+        if (!playerTurn)
+        {
+            turn++;
+            TurnCounter.GetComponent<Text>().text = $"Turn: {turn}";
+            ActiveTeam.GetComponent<Text>().text = "Blue's turn";
+        }
         playerTurn = false;
+        ActiveTeam.GetComponent<Text>().text = "Red's turn";
     }
             
 
