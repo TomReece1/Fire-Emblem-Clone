@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     private BoardTiles BoardTiles;
+    //private EnemyBehaviour EnemyBehaviour;
     public GameObject TurnCounter;
     public GameObject ActiveTeam;
 
@@ -25,6 +26,25 @@ public class GameController : MonoBehaviour
     void Update()
     {
         if (playerTurn && Input.GetKeyDown("e")) EndTurn();
+
+        if (!playerTurn)
+        {
+            //loop through all enemies and call MakeMove for them
+            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            {
+                enemy.GetComponent<EnemyBehaviour>().MakeMove();
+            }
+            EndTurn();
+        }
+
+    }
+
+    private void ResetTurnStages()
+    {
+        foreach (GameObject character in GameObject.FindGameObjectsWithTag("Character"))
+        {
+            character.GetComponent<CharBehaviour>().turnStage=0;
+        }
     }
 
     public void EndTurn()
@@ -32,12 +52,17 @@ public class GameController : MonoBehaviour
         BoardTiles.ClearAllTiles();
         if (!playerTurn)
         {
+            ResetTurnStages();
             turn++;
+            playerTurn = true;
             TurnCounter.GetComponent<Text>().text = $"Turn: {turn}";
             ActiveTeam.GetComponent<Text>().text = "Blue's turn";
         }
-        playerTurn = false;
-        ActiveTeam.GetComponent<Text>().text = "Red's turn";
+        else
+        {
+            playerTurn = false;
+            ActiveTeam.GetComponent<Text>().text = "Red's turn";
+        }
     }
             
 
