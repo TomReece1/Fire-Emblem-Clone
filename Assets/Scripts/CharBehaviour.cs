@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 public class CharBehaviour : MonoBehaviour
 {
     private BoardTiles BoardTiles;
+    private GameController GameController;
     private int m = 5;
     private int r = 3;
 
@@ -23,6 +24,7 @@ public class CharBehaviour : MonoBehaviour
     private void Awake()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
+        GameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
     private void Update()
@@ -30,6 +32,7 @@ public class CharBehaviour : MonoBehaviour
         if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
         if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
         if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
+        if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
     }
 
     private void ShowTiles()
@@ -37,6 +40,17 @@ public class CharBehaviour : MonoBehaviour
         BoardTiles.ClearAllTiles();
         ShowBlueTiles();
         ShowRedTiles();
+    }
+
+    private void Wait()
+    {
+        BoardTiles.ClearAllTiles();
+        turnStage = 2;
+        if (GameController.CheckTurnOver())
+        {
+            GameController.turn++;
+            GameController.playerTurn = false;
+        }
     }
 
     private void Attack()
@@ -59,9 +73,17 @@ public class CharBehaviour : MonoBehaviour
         {
 
             BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<TrainingDummy>().hp -= dmg;
-            BoardTiles.ClearAllTiles();
             HitAudioSource.Play();
+            Wait();
+
+/*            BoardTiles.ClearAllTiles();
             turnStage = 2;
+            if (GameController.CheckTurnOver())
+            {
+                GameController.turn++;
+                GameController.playerTurn = false;
+            }*/
+
         }
     }
 
