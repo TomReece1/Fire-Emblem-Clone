@@ -29,11 +29,17 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
-        if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
-        if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
-        if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
+        if (GameController.playerTurn)
+        {
+            if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
+            if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
+            if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
+            if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
+        }
+
     }
+
+
 
     private void ShowTiles()
     {
@@ -48,8 +54,7 @@ public class CharBehaviour : MonoBehaviour
         turnStage = 2;
         if (GameController.CheckTurnOver())
         {
-            GameController.turn++;
-            GameController.playerTurn = false;
+            GameController.EndTurn();
         }
     }
 

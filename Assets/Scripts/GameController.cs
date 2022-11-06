@@ -5,29 +5,30 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    private BoardTiles BoardTiles;
 
     public int turn = 1;
     public bool playerTurn = true;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
     }
 
     // Update is called once per frame
     void Update()
     {
-/*        if (CheckTurnOver())
-        {
-            turn++;
-            playerTurn = false;
-        }*/
+        if (playerTurn && Input.GetKeyDown("e")) EndTurn();
     }
 
-
-    //A method to cycle through all blue units and check their moveStage
-    //If all have moveStage == 2 then playerTurn = false and enemy turn methods start
+    public void EndTurn()
+    {
+        BoardTiles.ClearAllTiles();
+        turn++;
+        playerTurn = false;
+    }
+            
 
     public bool CheckTurnOver()
     {
