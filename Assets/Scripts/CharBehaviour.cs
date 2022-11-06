@@ -15,6 +15,8 @@ public class CharBehaviour : MonoBehaviour
     private int hp = 100;
     private int dmg = 10;
 
+    public int turnStage = 0;
+
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
@@ -25,15 +27,15 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("s"))
+        if (Input.GetKeyDown("s") && turnStage == 0)
         {
             BoardTiles.ClearAllTiles();
             ShowBlueTiles();
             ShowRedTiles();
         }
 
-        if (Input.GetKeyDown("m")) MoveMe();
-        if (Input.GetKeyDown("a")) Attack();
+        if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
+        if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
     }
 
     private void Attack()
@@ -58,6 +60,7 @@ public class CharBehaviour : MonoBehaviour
             BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<TrainingDummy>().hp -= dmg;
             BoardTiles.ClearAllTiles();
             HitAudioSource.Play();
+            turnStage = 2;
         }
     }
 
@@ -75,11 +78,15 @@ public class CharBehaviour : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 100)
             && hit.transform.gameObject.name == "BlueTile(Clone)"
-            && !EventSystem.current.IsPointerOverGameObject())
+            && !EventSystem.current.IsPointerOverGameObject()
+            )
         {
             transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
-            BoardTiles.ClearAllTiles();
             MoveAudioSource.Play();
+            turnStage = 1;
+            BoardTiles.ClearAllTiles();
+            ShowBlueTiles();
+            ShowRedTiles();
         }
     }
 
@@ -87,17 +94,25 @@ public class CharBehaviour : MonoBehaviour
     {
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
 
-        //at each point on the x axis from max moving left to max moving right
-        for (int i = -m; i <= m; i++)
+        if (turnStage == 0)
         {
-            //unused movement at this x is m-abs(i)
-            //bottom most blue is down by the amount of unused movement
-            //top most blue is up by the amount of unused movement
-            //from bottom to top place a blue
-            for (int j = -(m-Mathf.Abs(i)); j <= (m - Mathf.Abs(i)); j++)
+
+            //at each point on the x axis from max moving left to max moving right
+            for (int i = -m; i <= m; i++)
             {
-                BoardTiles.AddTile("blue", root + new Vector3(i, 0, j));
+                //unused movement at this x is m-abs(i)
+                //bottom most blue is down by the amount of unused movement
+                //top most blue is up by the amount of unused movement
+                //from bottom to top place a blue
+                for (int j = -(m - Mathf.Abs(i)); j <= (m - Mathf.Abs(i)); j++)
+                {
+                    BoardTiles.AddTile("blue", root + new Vector3(i, 0, j));
+                }
             }
+        }
+        else
+        {
+            BoardTiles.AddTile("blue", root);
         }
 
     }
@@ -106,32 +121,49 @@ public class CharBehaviour : MonoBehaviour
     {
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
 
-        //straight off and diagonally off the left and right
-        //start at the extreme left attackable square -(m+r), end at the attackable square immediately left of the leftmost move square (-m-1)
-        for (int i = -(m+r); i < -m; i++)
+        if (turnStage == 0)
         {
-            //unused range at this x is m-abs(i)+r
-            //bottom most red is down by the amount of unused range
-            //top most red is up by the amount of unused range
-            //from bottom to top place a red
-            //The second AddTile is for off the right side hence -i
-            for (int j = -(m - Mathf.Abs(i) + r); j <= (m - Mathf.Abs(i) + r); j++)
+
+            //straight off and diagonally off the left and right
+            //start at the extreme left attackable square -(m+r), end at the attackable square immediately left of the leftmost move square (-m-1)
+            for (int i = -(m + r); i < -m; i++)
             {
-                BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
-                BoardTiles.AddTile("red", root + new Vector3(-i, 0, j));
+                //unused range at this x is m-abs(i)+r
+                //bottom most red is down by the amount of unused range
+                //top most red is up by the amount of unused range
+                //from bottom to top place a red
+                //The second AddTile is for off the right side hence -i
+                for (int j = -(m - Mathf.Abs(i) + r); j <= (m - Mathf.Abs(i) + r); j++)
+                {
+                    BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
+                    BoardTiles.AddTile("red", root + new Vector3(-i, 0, j));
+                }
+            }
+
+            //above and below
+            for (int i = -m; i <= m; i++)
+            {
+                for (int j = 1; j <= r; j++)
+                {
+                    BoardTiles.AddTile("red", root + new Vector3(i, 0, -(m - Mathf.Abs(i) + j)));
+                    BoardTiles.AddTile("red", root + new Vector3(i, 0, m - Mathf.Abs(i) + j));
+                }
+            }
+
+        }
+        else
+        {
+            for (int i = -r; i <= r; i++)
+            {
+                //Same logic as place blues but for r instead of m
+                for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
+                {
+                    if (i != 0 || j != 0) BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
+                }
+
             }
         }
-
-        //above and below
-        for (int i = -m; i <= m; i++)
-        {
-            for (int j = 1; j <= r; j++)
-            {
-                BoardTiles.AddTile("red", root + new Vector3(i, 0, -(m - Mathf.Abs(i) + j)));
-                BoardTiles.AddTile("red", root + new Vector3(i, 0, m - Mathf.Abs(i) + j));
-            }
-        }
-
     }
+
 
 }
