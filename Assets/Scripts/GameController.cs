@@ -14,6 +14,8 @@ public class GameController : MonoBehaviour
     public int turn = 1;
     public bool playerTurn = true;
 
+    public bool gameFrozen = false;
+
 
 
     // Start is called before the first frame update
@@ -25,18 +27,33 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerTurn && Input.GetKeyDown("e")) EndTurn();
-
-        if (!playerTurn)
+        if (!gameFrozen)
         {
-            //loop through all enemies and call MakeMove for them
-            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            if (playerTurn && Input.GetKeyDown("e")) EndTurn();
+
+            if (!playerTurn)
             {
-                enemy.GetComponent<EnemyBehaviour>().MakeMove();
+                Debug.Log("Start enemy turn");
+
+                //loop through all enemies and call MakeMove for them
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+                {
+                    Debug.Log("Before invoking MakeMove");
+                    enemy.GetComponent<EnemyBehaviour>().MakeMove();
+                    Debug.Log("MakeMove ended #####################################");
+                }
+                Debug.Log("Finished MakeMove foreach loop in controller");
+                FreezeGame();
+                Debug.Log("FreezeGame invoked");
+                //EndTurn();
             }
-            EndTurn();
         }
 
+    }
+
+    public void FreezeGame()
+    {
+        gameFrozen = true;
     }
 
     private void ResetTurnStages()
@@ -49,8 +66,14 @@ public class GameController : MonoBehaviour
 
     public void EndTurn()
     {
-        BoardTiles.ClearAllTiles();
-        if (!playerTurn)
+        BoardTiles.ClearAllTilesImmediate();
+
+/*        for (int j = 0; j < GameObject.FindGameObjectsWithTag("Tile").Length; j++)
+        {
+            Debug.Log(GameObject.FindGameObjectsWithTag("Tile")[j].transform.position);
+        }*/
+
+            if (!playerTurn)
         {
             ResetTurnStages();
             turn++;
