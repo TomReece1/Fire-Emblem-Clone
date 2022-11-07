@@ -32,13 +32,19 @@ public class BoardTiles : MonoBehaviour
         return null;
     }
 
-
-
     public void ClearAllTiles()
     {
         foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
         {
             Destroy(tile);
+        }
+    }
+
+    public void ClearAllTilesImmediate()
+    {
+        foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
+        {
+            DestroyImmediate(tile);
         }
     }
 

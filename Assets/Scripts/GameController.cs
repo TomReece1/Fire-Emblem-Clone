@@ -14,6 +14,8 @@ public class GameController : MonoBehaviour
     public int turn = 1;
     public bool playerTurn = true;
 
+    public bool gameFrozen = false;
+
 
 
     // Start is called before the first frame update
@@ -25,18 +27,25 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerTurn && Input.GetKeyDown("e")) EndTurn();
-
-        if (!playerTurn)
+        if (!gameFrozen)
         {
-            //loop through all enemies and call MakeMove for them
-            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            if (playerTurn && Input.GetKeyDown("e")) EndTurn();
+
+            if (!playerTurn)
             {
-                enemy.GetComponent<EnemyBehaviour>().MakeMove();
+                foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+                {
+                    enemy.GetComponent<EnemyBehaviour>().MakeMove();
+                }
+                EndTurn();
             }
-            EndTurn();
         }
 
+    }
+
+    public void FreezeGame()
+    {
+        gameFrozen = true;
     }
 
     private void ResetTurnStages()
@@ -49,8 +58,9 @@ public class GameController : MonoBehaviour
 
     public void EndTurn()
     {
-        BoardTiles.ClearAllTiles();
-        if (!playerTurn)
+        BoardTiles.ClearAllTilesImmediate();
+
+            if (!playerTurn)
         {
             ResetTurnStages();
             turn++;
