@@ -23,6 +23,17 @@ public class BoardTiles : MonoBehaviour
         return null;
     }
 
+    public GameObject CheckForObjectOnCoord(Vector3 coord, string objTag)
+    {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag(objTag))
+        {
+            if (obj.transform.position.x == coord.x && obj.transform.position.z == coord.z) return obj;
+        }
+        return null;
+    }
+
+
+
     public void ClearAllTiles()
     {
         foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
