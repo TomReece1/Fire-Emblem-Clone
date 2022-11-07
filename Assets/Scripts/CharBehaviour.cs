@@ -11,8 +11,8 @@ public class CharBehaviour : MonoBehaviour
 {
     private BoardTiles BoardTiles;
     private GameController GameController;
-    private int m = 9;
-    private int r = 2;
+    private int m = 5;
+    private int r = 3;
 
     public int hp = 100;
     private int dmg = 10;
@@ -32,21 +32,11 @@ public class CharBehaviour : MonoBehaviour
     {
         if (GameController.playerTurn)
         {
-            //if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
+            if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
             if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
             if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
             if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
         }
-
-        if (Input.GetKeyDown("r")) ListAllRoutePermsAsStrings();
-
-    }
-
-    private void ShowTilesOld()
-    {
-        BoardTiles.ClearAllTiles();
-        ShowBlueTilesOld();
-        ShowRedTilesOld();
     }
 
     private void Wait()
@@ -105,223 +95,155 @@ public class CharBehaviour : MonoBehaviour
             transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
             MoveAudioSource.Play();
             turnStage = 1;
-            ShowTilesOld();
-        }
-    }
 
-    private void ShowBlueTilesOld()
-    {
-        Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
-
-        if (turnStage == 0)
-        {
-
-            //at each point on the x axis from max moving left to max moving right
-            for (int i = -m; i <= m; i++)
-            {
-                //unused movement at this x is m-abs(i)
-                //bottom most blue is down by the amount of unused movement
-                //top most blue is up by the amount of unused movement
-                //from bottom to top place a blue
-                for (int j = -(m - Mathf.Abs(i)); j <= (m - Mathf.Abs(i)); j++)
-                {
-                    BoardTiles.AddTile("blue", root + new Vector3(i, 0, j));
-                }
-            }
-        }
-        else
-        {
-            BoardTiles.AddTile("blue", root);
-        }
-
-    }
-
-    private void ShowRedTilesOld()
-    {
-        Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
-
-        if (turnStage == 0)
-        {
-
-            //straight off and diagonally off the left and right
-            //start at the extreme left attackable square -(m+r), end at the attackable square immediately left of the leftmost move square (-m-1)
-            for (int i = -(m + r); i < -m; i++)
-            {
-                //unused range at this x is m-abs(i)+r
-                //bottom most red is down by the amount of unused range
-                //top most red is up by the amount of unused range
-                //from bottom to top place a red
-                //The second AddTile is for off the right side hence -i
-                for (int j = -(m - Mathf.Abs(i) + r); j <= (m - Mathf.Abs(i) + r); j++)
-                {
-                    BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
-                    BoardTiles.AddTile("red", root + new Vector3(-i, 0, j));
-                }
-            }
-
-            //above and below
-            for (int i = -m; i <= m; i++)
-            {
-                for (int j = 1; j <= r; j++)
-                {
-                    BoardTiles.AddTile("red", root + new Vector3(i, 0, -(m - Mathf.Abs(i) + j)));
-                    BoardTiles.AddTile("red", root + new Vector3(i, 0, m - Mathf.Abs(i) + j));
-                }
-            }
-
-        }
-        else
-        {
+            BoardTiles.ClearAllTiles();
+            //Place attackable red tiles after using all movement
             for (int i = -r; i <= r; i++)
             {
-                //Same logic as place blues but for r instead of m
                 for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
                 {
-                    if (i != 0 || j != 0) BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
+                    if (i != 0 || j != 0) BoardTiles.AddTile("red", transform.position - new Vector3(0, 0.49f, 0) + new Vector3(i, 0, j));
                 }
-
             }
         }
     }
 
-    private void ShowBlueTiles()
+    private void ShowTiles()
     {
-        //Make a list of coordinates that are blue tile candidates
-
+        BoardTiles.ClearAllTiles();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
+        BoardTiles.AddTile("blue", root);
 
-        List<Vector3> blueCandidates = new List<Vector3>();
-        blueCandidates.Add(root);
+        int m_rem = m;
 
-        //at each point on the x axis from max moving left to max moving right
-        for (int i = -m; i <= m; i++)
+        if (turnStage > 0) m_rem = 0;
+
+        for (int i = 1; i <= (m_rem + r); i++)
         {
-            //unused movement at this x is m-abs(i)
-            //bottom most blue is down by the amount of unused movement
-            //top most blue is up by the amount of unused movement
-            //from bottom to top are blue candidates
-            for (int j = -(m - Mathf.Abs(i)); j <= (m - Mathf.Abs(i)); j++)
+            foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
             {
-                blueCandidates.Add(root + new Vector3(i, 0, j));
+                //Check if the tile directly above has no obstacle and no tile
+                //If it's empty then place a blue on it if i<=m, else a red
+                CheckAndPlace(tile.transform.position + new Vector3(0, 0, 1), i);
+                CheckAndPlace(tile.transform.position + new Vector3(0, 0, -1), i);
+                CheckAndPlace(tile.transform.position + new Vector3(-1, 0, 0), i);
+                CheckAndPlace(tile.transform.position + new Vector3(1, 0, 0), i);
+
             }
         }
     }
 
-    private void ListAllRoutePerms(Vector3 start)
+    private void CheckAndPlace(Vector3 coord, int iteration)
     {
-        List<List<Vector3>> routes = new List<List<Vector3>>();
-
-        //loop i from 1 to m
-        //for i=1, add the following 4 lists of length 1 to routes:
-        //(0,-1), (0,1), (-1, 0), (1, 0)
-        //for i=2, add the following 16 lists of length 2 to routes:
-        //[(0,-1), (0,-2)], [(0,-1), (0,0)], [(0,-1), (-1,-1)], [(0,-1), (1,-1)]
-        //[(0,1), (0,0)], [(0,1), (0,2)], [(0,1), (-1,1)], [(0,1), (1,1)]
-        //[(-1,0), (-1,-1)], [(-1,0), (-1,1)], [(-1,0), (-2,0)], [(-1,0), (0,0)]
-        //[(1,0), (1,-1)], [(1,0), (1,1)], [(1,0), (0,0)], [(1,0), (2,0)]
-
-        for (int i = 1; i <= m; i++)
+        //On iterations 1 to m, check !obstacle, !enemy, !tile
+        //On iterations m+1 to m+r, just check !tile
+        //Only place blues before iteration m
+        //Only place reds after iteration m
+        if (BoardTiles.CheckForObjectOnCoord(coord, "Tile") == null)
         {
-            //Instantiate a single route
-
-            List<Vector3> route = new List<Vector3>();
-
-            //Add the route down
-            route.Add(start + new Vector3(0, 0, -1));
-
-
-
-        }
+            if (iteration <= m && BoardTiles.CheckForObjectOnCoord(coord, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(coord, "Enemy") == null) BoardTiles.AddTile("blue", coord);
+            else if (iteration > m) BoardTiles.AddTile("red", coord);
+        };
     }
 
-    private List<string> ListAllRoutePermsAsStrings()
-    {
-        List<string> routes = new List<string>();
 
-        //Add these to routes
-        //D, U, L, R
-        //DD, DU, DL, DR
-        //UD, UU, UL, UR
-        //LD, LU, LL, LR
-        //RD, RU, RL, RR
-        //...up to length m
-
-        for (int j = 1; j <= Math.Pow(4, m); j++)
+    //Keep these 3 methods around for a while, they work just not needed right now.
+    /*    private void ShowBlueTilesOld()
         {
-            routes.Add("D");
-            routes.Add("U");
-            routes.Add("L");
-            routes.Add("R");
-
-        }
-        //Now we have D, U, L, R, D, U, L, R, D, U, L, R, D, U, L, R
-
-        int currIndex = 0;
-
-
-        //if m=3, we need to do the next step 4^1 times, then 4^0 times
-        //this is how many times we're going to repeat the cycle through D,U,L,R
-        for (int k = 1; k <= m-1; k++)
+            Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
+            if (turnStage == 0)
+            {
+                for (int i = -m; i <= m; i++)
+                {
+                    for (int j = -(m - Mathf.Abs(i)); j <= (m - Mathf.Abs(i)); j++)
+                    {
+                        BoardTiles.AddTile("blue", root + new Vector3(i, 0, j));
+                    }
+                }
+            }
+            else BoardTiles.AddTile("blue", root);
+        }*/
+    /*    private void ShowRedTilesOld()
         {
+            Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
 
-        //double times = Math.Pow(4, (m-1-k));
-
-        for (int l = 1; l <= Math.Pow(4, (m - 1 - k)); l++)
+            if (turnStage == 0)
+            {
+                for (int i = -(m + r); i < -m; i++)
+                {
+                    for (int j = -(m - Mathf.Abs(i) + r); j <= (m - Mathf.Abs(i) + r); j++)
+                    {
+                        BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
+                        BoardTiles.AddTile("red", root + new Vector3(-i, 0, j));
+                    }
+                }
+                for (int i = -m; i <= m; i++)
+                {
+                    for (int j = 1; j <= r; j++)
+                    {
+                        BoardTiles.AddTile("red", root + new Vector3(i, 0, -(m - Mathf.Abs(i) + j)));
+                        BoardTiles.AddTile("red", root + new Vector3(i, 0, m - Mathf.Abs(i) + j));
+                    }
+                }
+            }
+            else
+            {
+                for (int i = -r; i <= r; i++)
+                {
+                    for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
+                    {
+                        if (i != 0 || j != 0) BoardTiles.AddTile("red", root + new Vector3(i, 0, j));
+                    }
+                }
+            }
+        }*/
+    /*    private List<string> ListAllRoutePermsAsStrings()
         {
-            //when k=1, append D 4^1 times, then U 4^1 times...
-            //then when k=0, append D 4^2 times, then U 4^2 times
-            for (int j = 1; j <= Math.Pow(4, k); j++)
+            List<string> routes = new List<string>();
+            for (int j = 1; j <= Math.Pow(4, m); j++)
             {
-                routes[currIndex] += "D";
-                Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
-                currIndex++;
-                
+                routes.Add("D");
+                routes.Add("U");
+                routes.Add("L");
+                routes.Add("R");
             }
-            for (int j = 1; j <= Math.Pow(4, k); j++)
+            int currIndex = 0;
+            for (int k = 1; k <= m-1; k++)
             {
-                routes[currIndex] += "U";
-                Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
-                currIndex++;
-            }
-            for (int j = 1; j <= Math.Pow(4, k); j++)
+            for (int l = 1; l <= Math.Pow(4, (m - 1 - k)); l++)
             {
-                routes[currIndex] += "L";
-                Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
-                currIndex++;
+                for (int j = 1; j <= Math.Pow(4, k); j++)
+                {
+                    routes[currIndex] += "D";
+                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
+                    currIndex++;  
+                }
+                for (int j = 1; j <= Math.Pow(4, k); j++)
+                {
+                    routes[currIndex] += "U";
+                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
+                    currIndex++;
+                }
+                for (int j = 1; j <= Math.Pow(4, k); j++)
+                {
+                    routes[currIndex] += "L";
+                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
+                    currIndex++;
+                }
+                for (int j = 1; j <= Math.Pow(4, k); j++)
+                {
+                    routes[currIndex] += "R";
+                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
+                    currIndex++;
+                }
             }
-            for (int j = 1; j <= Math.Pow(4, k); j++)
+            currIndex = 0;
+            }
+            for (int i = 0; i < Math.Pow(4, m); i++)
             {
-                routes[currIndex] += "R";
-                Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
-                currIndex++;
+                Debug.Log($"iternation {i} is {routes[i]}");
             }
-        }
-        currIndex = 0;
-
-
-        }
-
-
-        for (int i = 0; i < Math.Pow(4, m); i++)
-        {
-            Debug.Log($"iternation {i} is {routes[i]}");
-        }
-
-        return routes;
-
-
-
-        
-    }
-
-    private void extendPathPerms(List<string> perms)
-    {
-
-    }
-
-    private void CheckCoordIfBlue(Vector3 start, Vector3 candidate)
-    {
-        //make a shortlist of routes from start to candidate
-    }
+            return routes;
+        }*/
 
 }
