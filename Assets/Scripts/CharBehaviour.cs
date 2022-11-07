@@ -215,33 +215,25 @@ public class CharBehaviour : MonoBehaviour
                 for (int j = 1; j <= Math.Pow(4, k); j++)
                 {
                     routes[currIndex] += "D";
-                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
                     currIndex++;  
                 }
                 for (int j = 1; j <= Math.Pow(4, k); j++)
                 {
                     routes[currIndex] += "U";
-                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
                     currIndex++;
                 }
                 for (int j = 1; j <= Math.Pow(4, k); j++)
                 {
                     routes[currIndex] += "L";
-                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
                     currIndex++;
                 }
                 for (int j = 1; j <= Math.Pow(4, k); j++)
                 {
                     routes[currIndex] += "R";
-                    Debug.Log($"currIndex is {currIndex}, just made {routes[currIndex]}");
                     currIndex++;
                 }
             }
             currIndex = 0;
-            }
-            for (int i = 0; i < Math.Pow(4, m); i++)
-            {
-                Debug.Log($"iternation {i} is {routes[i]}");
             }
             return routes;
         }*/

@@ -33,19 +33,11 @@ public class GameController : MonoBehaviour
 
             if (!playerTurn)
             {
-                Debug.Log("Start enemy turn");
-
-                //loop through all enemies and call MakeMove for them
                 foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
                 {
-                    Debug.Log("Before invoking MakeMove");
                     enemy.GetComponent<EnemyBehaviour>().MakeMove();
-                    Debug.Log("MakeMove ended #####################################");
                 }
-                Debug.Log("Finished MakeMove foreach loop in controller");
-                FreezeGame();
-                Debug.Log("FreezeGame invoked");
-                //EndTurn();
+                EndTurn();
             }
         }
 
@@ -67,11 +59,6 @@ public class GameController : MonoBehaviour
     public void EndTurn()
     {
         BoardTiles.ClearAllTilesImmediate();
-
-/*        for (int j = 0; j < GameObject.FindGameObjectsWithTag("Tile").Length; j++)
-        {
-            Debug.Log(GameObject.FindGameObjectsWithTag("Tile")[j].transform.position);
-        }*/
 
             if (!playerTurn)
         {
