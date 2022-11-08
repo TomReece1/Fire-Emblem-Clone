@@ -59,16 +59,10 @@ public class GameController : MonoBehaviour
                         //This cannot be refactored to selectedUnity because we need to check if this specific click was on a character's square.
                         if (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character") != null && CharBehaviour.turnStage == 0) CharBehaviour.ShowTiles();
                         else if (selectedUnit != null && CharBehaviour.turnStage == 0) CharBehaviour.MoveMe();
+                        else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 1) CharBehaviour.Attack();
                     }
                 }
-
-
-/*                    if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
-                    
-                if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
-                if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
-                if (Input.GetKeyDown("w") && turnStage <= 1) Wait();*/
 
                 if (Input.GetKeyDown("e")) EndTurn();
             }
