@@ -30,16 +30,10 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (GameController.playerTurn)
-        {
-            if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
-            if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
-            if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
-            if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
-        }
+
     }
 
-    private void Wait()
+    public void Wait()
     {
         BoardTiles.ClearAllTiles();
         turnStage = 2;
@@ -49,7 +43,7 @@ public class CharBehaviour : MonoBehaviour
         }
     }
 
-    private void Attack()
+    public void Attack()
     {
         //We have a seperate check if in range function
         //It doesn't matter if the enemy is on a blue or red tile
@@ -81,7 +75,7 @@ public class CharBehaviour : MonoBehaviour
         else return false;
     }
 
-    private void MoveMe()
+    public void MoveMe()
     {
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
@@ -108,9 +102,9 @@ public class CharBehaviour : MonoBehaviour
         }
     }
 
-    private void ShowTiles()
+    public void ShowTiles()
     {
-        BoardTiles.ClearAllTiles();
+        BoardTiles.ClearAllTilesImmediate();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
         BoardTiles.AddTile("blue", root);
 
