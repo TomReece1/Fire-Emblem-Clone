@@ -30,13 +30,13 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-/*        if (GameController.playerTurn)
+        if (GameController.playerTurn)
         {
-            if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
+            //if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
             if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
             if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
             if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
-        }*/
+        }
     }
 
     private void Wait()
@@ -110,7 +110,7 @@ public class CharBehaviour : MonoBehaviour
 
     public void ShowTiles()
     {
-        BoardTiles.ClearAllTiles();
+        BoardTiles.ClearAllTilesImmediate();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
         BoardTiles.AddTile("blue", root);
 

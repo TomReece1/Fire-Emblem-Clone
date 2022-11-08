@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     private BoardTiles BoardTiles;
-    //private CharBehaviour CharBehaviour;
+    private CharBehaviour CharBehaviour;
     private Camera cameraComponent;
     //private EnemyBehaviour EnemyBehaviour;
     public GameObject TurnCounter;
@@ -43,20 +43,16 @@ public class GameController : MonoBehaviour
                     cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
                     Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
-                    //Vector3Int gridCoord;
 
                     //if you clicked the floor
                     if (Physics.Raycast(ray, out hit, 100)
                         && !EventSystem.current.IsPointerOverGameObject()
                         )
                     {
-                        Debug.Log("You clicked something");
-                        //check if the rounded vector you clicked has a blue unit on it
-                        //gridCoord = Vector3Int.RoundToInt(hit.point);
                         Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
-                        Debug.Log($"Tile clicked has coords: {RoundedHitCoord}");
                         selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
-                        if (selectedUnit != null && selectedUnit.GetComponent<CharBehaviour>().turnStage == 0) selectedUnit.GetComponent<CharBehaviour>().ShowTiles();
+                        if (selectedUnit != null) CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
+                        if (selectedUnit != null && CharBehaviour.turnStage == 0) CharBehaviour.ShowTiles();
                     }
                 }
 
