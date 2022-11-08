@@ -50,9 +50,15 @@ public class GameController : MonoBehaviour
                         )
                     {
                         Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
-                        selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
-                        if (selectedUnit != null) CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
-                        if (selectedUnit != null && CharBehaviour.turnStage == 0) CharBehaviour.ShowTiles();
+                        //If you clicked a unit, set selectedUnit and CharBehaviour
+                        if (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character"))
+                        {
+                            selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
+                            CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
+                        }
+                        //This cannot be refactored to selectedUnity because we need to check if this specific click was on a character's square.
+                        if (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character") != null && CharBehaviour.turnStage == 0) CharBehaviour.ShowTiles();
+                        else if (selectedUnit != null && CharBehaviour.turnStage == 0) CharBehaviour.MoveMe();
                     }
                 }
 

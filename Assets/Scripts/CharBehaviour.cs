@@ -33,7 +33,7 @@ public class CharBehaviour : MonoBehaviour
         if (GameController.playerTurn)
         {
             //if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
-            if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
+            //if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
             if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
             if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
         }
@@ -81,7 +81,7 @@ public class CharBehaviour : MonoBehaviour
         else return false;
     }
 
-    private void MoveMe()
+    public void MoveMe()
     {
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
