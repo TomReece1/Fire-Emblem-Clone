@@ -35,6 +35,7 @@ public class CharBehaviour : MonoBehaviour
 
     public void Wait()
     {
+        Debug.Log("Wait");
         BoardTiles.ClearAllTiles();
         turnStage = 2;
         if (GameController.CheckTurnOver())
@@ -45,6 +46,8 @@ public class CharBehaviour : MonoBehaviour
 
     public void Attack()
     {
+        Debug.Log("Make attack");
+
         //We have a seperate check if in range function
         //It doesn't matter if the enemy is on a blue or red tile
         //you click attack on the tile
@@ -77,6 +80,8 @@ public class CharBehaviour : MonoBehaviour
 
     public void MoveMe()
     {
+        Debug.Log("Make move");
+
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -104,6 +109,7 @@ public class CharBehaviour : MonoBehaviour
 
     public void ShowTiles()
     {
+        Debug.Log("ShowTiles");
         BoardTiles.ClearAllTilesImmediate();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
         BoardTiles.AddTile("blue", root);

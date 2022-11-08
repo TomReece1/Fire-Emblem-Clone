@@ -10,7 +10,6 @@ public class GameController : MonoBehaviour
     private BoardTiles BoardTiles;
     private CharBehaviour CharBehaviour;
     private Camera cameraComponent;
-    //private EnemyBehaviour EnemyBehaviour;
     public GameObject TurnCounter;
     public GameObject ActiveTeam;
 
@@ -21,14 +20,10 @@ public class GameController : MonoBehaviour
 
     public bool gameFrozen = false;
 
-    
-
-
     // Start is called before the first frame update
     void Awake()
     {
-        BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
-        
+        BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>(); 
     }
 
     // Update is called once per frame
@@ -50,15 +45,29 @@ public class GameController : MonoBehaviour
                         )
                     {
                         Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
-                        //If you clicked a unit, set selectedUnit and CharBehaviour
-                        if (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character"))
+                        //If you clicked a unit
+                        //that was either the first unit click of the turn
+                        //or this click was different than the current selectedUnit
+                        //then showtiles for it and set selectedUnit and CharBehaviour
+                        if (
+                            (selectedUnit == null)
+                            ||
+                            (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character")
+
+                            && (RoundedHitCoord.x != selectedUnit.transform.position.x || RoundedHitCoord.z != selectedUnit.transform.position.z)
+                            ))
                         {
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
+                            CharBehaviour.ShowTiles();
                         }
-                        //This cannot be refactored to selectedUnity because we need to check if this specific click was on a character's square.
-                        if (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character") != null && CharBehaviour.turnStage == 0) CharBehaviour.ShowTiles();
-                        else if (selectedUnit != null && CharBehaviour.turnStage == 0) CharBehaviour.MoveMe();
+                        else if (
+                            selectedUnit != null && CharBehaviour.turnStage == 0
+                            && BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Tile").name == "BlueTile(Clone)"
+                            )
+                        {
+                            CharBehaviour.MoveMe();
+                        }
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 1) CharBehaviour.Attack();
                     }
@@ -66,8 +75,6 @@ public class GameController : MonoBehaviour
 
                 if (Input.GetKeyDown("e")) EndTurn();
             }
-
-            
 
             if (!playerTurn)
             {
@@ -78,7 +85,6 @@ public class GameController : MonoBehaviour
                 EndTurn();
             }
         }
-
     }
 
     public void FreezeGame()
@@ -101,6 +107,7 @@ public class GameController : MonoBehaviour
             if (!playerTurn)
         {
             ResetTurnStages();
+            selectedUnit = null;
             turn++;
             playerTurn = true;
             TurnCounter.GetComponent<Text>().text = $"Turn: {turn}";
@@ -113,7 +120,6 @@ public class GameController : MonoBehaviour
         }
     }
             
-
     public bool CheckTurnOver()
     {
         foreach (GameObject character in GameObject.FindGameObjectsWithTag("Character"))
