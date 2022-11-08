@@ -4,6 +4,7 @@ using System.Drawing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class GameController : MonoBehaviour
     {
         if (!gameFrozen)
         {
+
+            if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0) SceneManager.LoadScene(1);
+
             if (playerTurn)
             {
                 if (Input.GetMouseButtonDown(0))
