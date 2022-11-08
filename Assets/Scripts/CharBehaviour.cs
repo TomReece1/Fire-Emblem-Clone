@@ -34,7 +34,7 @@ public class CharBehaviour : MonoBehaviour
         {
             //if (Input.GetKeyDown("s") && turnStage == 0) ShowTiles();
             //if (Input.GetKeyDown("m") && turnStage == 0) MoveMe();
-            if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
+            //if (Input.GetKeyDown("a") && turnStage <= 1) Attack();
             if (Input.GetKeyDown("w") && turnStage <= 1) Wait();
         }
     }
@@ -49,7 +49,7 @@ public class CharBehaviour : MonoBehaviour
         }
     }
 
-    private void Attack()
+    public void Attack()
     {
         //We have a seperate check if in range function
         //It doesn't matter if the enemy is on a blue or red tile
