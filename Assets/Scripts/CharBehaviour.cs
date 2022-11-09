@@ -30,7 +30,34 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown("r"))
+        {
+            List<Vector3> route = makeRoute(new Vector3(2,0.01f,3));
+            Debug.Log(route[5]);
+            Debug.Log(route[4]);
+            Debug.Log(route[3]);
+            Debug.Log(route[2]);
+            Debug.Log(route[1]);
+            Debug.Log(route[0]);
+        }
+    }
 
+    private List<Vector3> makeRoute(Vector3 endCoord)
+    {
+        List<Vector3> route = new List<Vector3>();
+        route.Add(endCoord);
+
+        Vector3 prevCoord = BoardTiles.CheckForObjectOnCoord(endCoord, "Tile").GetComponent<TileDirections>().prevCoord;
+        route.Add(prevCoord);
+
+        do
+        {
+            prevCoord = BoardTiles.CheckForObjectOnCoord(prevCoord, "Tile").GetComponent<TileDirections>().prevCoord;
+            route.Add(prevCoord);
+        }
+        while (prevCoord.x != transform.position.x || prevCoord.z != transform.position.z);
+
+        return route;
     }
 
     public void Wait()
