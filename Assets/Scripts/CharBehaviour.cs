@@ -13,6 +13,7 @@ public class CharBehaviour : MonoBehaviour
     private BoardTiles BoardTiles;
     private GameController GameController;
     private int m = 5;
+    //private int m_rem = 0;
     private int r = 3;
 
     public int hp = 100;
@@ -188,7 +189,7 @@ public class CharBehaviour : MonoBehaviour
         //On iterations m+1 to m+r, just check !tile
         //Only place blues before iteration m
         //Only place reds after iteration m
-        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null)
+        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null && turnStage < 2)
         {
             if (iteration <= m && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Enemy") == null) BoardTiles.AddTile("blue", prevCoord, prevCoord + translation);
             else if (iteration > m) BoardTiles.AddTile("red", prevCoord, prevCoord + translation);

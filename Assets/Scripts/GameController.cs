@@ -59,6 +59,7 @@ public class GameController : MonoBehaviour
                             && (RoundedHitCoord.x != selectedUnit.transform.position.x || RoundedHitCoord.z != selectedUnit.transform.position.z)
                             ))
                         {
+                            Debug.Log("You tried to reselect a different unit");
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
                             CharBehaviour.ShowTiles();
