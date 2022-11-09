@@ -17,6 +17,12 @@ public class CharBehaviour : MonoBehaviour
     public int hp = 100;
     private int dmg = 10;
 
+    public float speed = 0.0000000000001f;
+    private Vector3 target;
+    //public GameObject MoveTargetTile;
+    public bool isMoving = false;
+
+
     public int turnStage = 0;
 
     public AudioSource MoveAudioSource;
@@ -30,6 +36,23 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown("w")) MoveOneTile(new Vector3(0, 0.5f, 1));
+
+        if (isMoving)
+        {
+            // Move our position a step closer to the target.
+            //var step = speed * Time.deltaTime; 
+            transform.position = Vector3.MoveTowards(transform.position, target, 0.01f);
+
+            // Check if the position of the cube and sphere are approximately equal.
+            if (Vector3.Distance(transform.position, target) < 0.001f)
+            {
+                // Put it on the right spot and stop moving
+                transform.position = target;
+                isMoving = false;
+            }
+        }
+
         if (Input.GetKeyDown("r"))
         {
             List<Vector3> route = makeRoute(new Vector3(2,0.01f,3));
@@ -40,6 +63,13 @@ public class CharBehaviour : MonoBehaviour
             Debug.Log(route[1]);
             Debug.Log(route[0]);
         }
+
+    }
+
+    private void MoveOneTile(Vector3 coord)
+    {
+        target = coord;
+        isMoving = true;
     }
 
     private List<Vector3> makeRoute(Vector3 endCoord)

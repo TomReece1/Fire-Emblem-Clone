@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
     public int turn = 1;
     public bool playerTurn = true;
 
-    public bool gameFrozen = false;
+    public bool gameFrozen = true;
 
     // Start is called before the first frame update
     void Awake()
