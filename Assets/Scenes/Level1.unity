@@ -1184,7 +1184,7 @@ MonoBehaviour:
   ActiveTeam: {fileID: 1791648052}
   turn: 1
   playerTurn: 1
-  gameFrozen: 1
+  gameFrozen: 0
 --- !u!4 &931537275
 Transform:
   m_ObjectHideFlags: 0

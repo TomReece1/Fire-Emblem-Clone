@@ -36,7 +36,7 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("w")) MoveOneTile(new Vector3(0, 0.5f, 1));
+        if (Input.GetKeyDown("w")) MoveMe();
 
         if (isMoving)
         {
@@ -143,7 +143,13 @@ public class CharBehaviour : MonoBehaviour
             && !EventSystem.current.IsPointerOverGameObject()
             )
         {
-            transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
+            //transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
+            //MoveOneTile(hit.transform.position + new Vector3(0, 0.49f, 0));
+            List<Vector3> route = makeRoute(hit.transform.position);
+            for (int i = route.Count -1; i >=0; i--)
+            {
+                MoveOneTile(route[i] + new Vector3(0, 0.49f, 0));
+            }
             MoveAudioSource.Play();
             turnStage = 1;
 
