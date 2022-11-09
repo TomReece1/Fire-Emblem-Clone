@@ -48,13 +48,18 @@ public class BoardTiles : MonoBehaviour
         }
     }
 
-    public void AddTile(string colour, Vector3 coord)
+    public void AddTile(string colour, Vector3 prevCoord, Vector3 coord)
     {
         if (coord.x >= 0 && coord.z >= 0 && coord.x <= 9 && coord.z <= 9)
         {
-            if (colour == "blue") Instantiate(BlueTilePrefab).transform.position = coord;
-            else if (colour == "red") Instantiate(RedTilePrefab).transform.position = coord;
-            else if (colour == "white") Instantiate(WhiteTilePrefab).transform.position = coord;
+            GameObject tile;
+
+            if (colour == "blue") tile = Instantiate(BlueTilePrefab);
+            else if (colour == "red") tile = Instantiate(RedTilePrefab);
+            else tile = Instantiate(WhiteTilePrefab);
+
+            tile.transform.position = coord;
+            tile.GetComponent<TileDirections>().prevCoord = prevCoord;
         }
     }
 

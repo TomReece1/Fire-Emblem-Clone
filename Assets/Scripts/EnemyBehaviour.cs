@@ -66,7 +66,7 @@ public class EnemyBehaviour : MonoBehaviour
         BoardTiles.ClearAllTilesImmediate();
 
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
-        BoardTiles.AddTile("blue", root);
+        BoardTiles.AddTile("blue", root, root);
 
         int m_rem = m;
 
@@ -83,28 +83,27 @@ public class EnemyBehaviour : MonoBehaviour
 
                 //Check if the tile directly above has no obstacle and no tile
                 //If it's empty then place a blue on it if i<=m, else a red
-                CheckAndPlace(tile.transform.position + new Vector3(0, 0, 1), i);
-                CheckAndPlace(tile.transform.position + new Vector3(0, 0, -1), i);
-
-                CheckAndPlace(tile.transform.position + new Vector3(-1, 0, 0), i);
-                CheckAndPlace(tile.transform.position + new Vector3(1, 0, 0), i);
+                CheckAndPlace(tile.transform.position, new Vector3(0, 0, 1), i);
+                CheckAndPlace(tile.transform.position, new Vector3(0, 0, -1), i);
+                CheckAndPlace(tile.transform.position, new Vector3(-1, 0, 0), i);
+                CheckAndPlace(tile.transform.position, new Vector3(1, 0, 0), i);
 
             }
         }
 
     }
 
-    private void CheckAndPlace(Vector3 coord, int iteration)
+    private void CheckAndPlace(Vector3 prevCoord, Vector3 translation, int iteration)
     {
         //Debug.Log("CheckAndPlace started");
         //On iterations 1 to m, check !obstacle, !enemy, !tile
         //On iterations m+1 to m+r, just check !tile
         //Only place blues before iteration m
         //Only place reds after iteration m
-        if (BoardTiles.CheckForObjectOnCoord(coord, "Tile") == null)
+        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null)
         {
-            if (iteration <= m && BoardTiles.CheckForObjectOnCoord(coord, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(coord, "Character") == null) BoardTiles.AddTile("blue", coord);
-            else if (iteration > m) BoardTiles.AddTile("red", coord);
+            if (iteration <= m && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Character") == null) BoardTiles.AddTile("blue", prevCoord, prevCoord + translation);
+            else if (iteration > m) BoardTiles.AddTile("red", prevCoord, prevCoord + translation);
         };
     }
 
