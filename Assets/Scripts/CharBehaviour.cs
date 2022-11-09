@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,7 +18,7 @@ public class CharBehaviour : MonoBehaviour
     public int hp = 100;
     private int dmg = 10;
 
-    public float speed = 0.0000000000001f;
+    public float speed = 1f;
     private Vector3 target;
     //public GameObject MoveTargetTile;
     public bool isMoving = false;
@@ -36,13 +37,11 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("w")) MoveMe();
-
         if (isMoving)
         {
             // Move our position a step closer to the target.
-            //var step = speed * Time.deltaTime; 
-            transform.position = Vector3.MoveTowards(transform.position, target, 0.01f);
+            var step = speed * Time.deltaTime; 
+            transform.position = Vector3.MoveTowards(transform.position, target, step);
 
             // Check if the position of the cube and sphere are approximately equal.
             if (Vector3.Distance(transform.position, target) < 0.001f)
@@ -52,18 +51,50 @@ public class CharBehaviour : MonoBehaviour
                 isMoving = false;
             }
         }
+    }
 
-        if (Input.GetKeyDown("r"))
+    IEnumerator ExecuteAfterTime(float time, List<Vector3> route, int iteration)
+    {
+        yield return new WaitForSeconds(time);
+        MoveOneTile(route[iteration] + new Vector3(0, 0.49f, 0));
+    }
+
+    IEnumerator RedsAfterTime(float time)
+    {
+        //Place attackable reds after using movement
+        yield return new WaitForSeconds(time);
+                    for (int i = -r; i <= r; i++)
+            {
+                for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
+                {
+                    if (i != 0 || j != 0) BoardTiles.AddTile("red", transform.position, transform.position - new Vector3(0, 0.49f, 0) + new Vector3(i, 0, j));
+                }
+            }
+    }
+
+    public void MoveMe()
+    {
+        Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100)
+            && hit.transform.gameObject.name == "BlueTile(Clone)"
+            && !EventSystem.current.IsPointerOverGameObject()
+            )
         {
-            List<Vector3> route = makeRoute(new Vector3(2,0.01f,3));
-            Debug.Log(route[5]);
-            Debug.Log(route[4]);
-            Debug.Log(route[3]);
-            Debug.Log(route[2]);
-            Debug.Log(route[1]);
-            Debug.Log(route[0]);
-        }
+            List<Vector3> route = makeRoute(hit.transform.position);
+            MoveOneTile(route[route.Count - 1] + new Vector3(0, 0.49f, 0));
+            for (int i = route.Count - 2; i >= 0; i--)
+            {
+                StartCoroutine(ExecuteAfterTime((route.Count - 1 - i) / 4f, route, i));
+            }
+            StartCoroutine(RedsAfterTime(route.Count / 4f));
+            MoveAudioSource.Play();
+            turnStage = 1;
 
+            BoardTiles.ClearAllTiles();
+        }
     }
 
     private void MoveOneTile(Vector3 coord)
@@ -102,12 +133,6 @@ public class CharBehaviour : MonoBehaviour
 
     public void Attack()
     {
-        //We have a seperate check if in range function
-        //It doesn't matter if the enemy is on a blue or red tile
-        //you click attack on the tile
-        //if there's an enemy on it (loop through enemies and if (x,z) match the hit tile) && it's in range abs(x-x) + abs(z-z) <= r
-        //let's stick with the requirement of hitting a tile tag for now for easy extraction of (x,z) plus it's visually more obvious for the player
-
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -118,11 +143,9 @@ public class CharBehaviour : MonoBehaviour
             && CheckInRange(hit.transform.position)
             && !EventSystem.current.IsPointerOverGameObject())
         {
-
             BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp -= dmg;
             HitAudioSource.Play();
             Wait();
-
         }
     }
 
@@ -130,39 +153,6 @@ public class CharBehaviour : MonoBehaviour
     {
         if (Mathf.Abs(coord.x - transform.position.x) + Mathf.Abs(coord.z - transform.position.z) <= r) return true;
         else return false;
-    }
-
-    public void MoveMe()
-    {
-        Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
-        Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 100)
-            && hit.transform.gameObject.name == "BlueTile(Clone)"
-            && !EventSystem.current.IsPointerOverGameObject()
-            )
-        {
-            //transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
-            //MoveOneTile(hit.transform.position + new Vector3(0, 0.49f, 0));
-            List<Vector3> route = makeRoute(hit.transform.position);
-            for (int i = route.Count -1; i >=0; i--)
-            {
-                MoveOneTile(route[i] + new Vector3(0, 0.49f, 0));
-            }
-            MoveAudioSource.Play();
-            turnStage = 1;
-
-            BoardTiles.ClearAllTiles();
-            //Place attackable red tiles after using all movement
-            for (int i = -r; i <= r; i++)
-            {
-                for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
-                {
-                    if (i != 0 || j != 0) BoardTiles.AddTile("red", transform.position, transform.position - new Vector3(0, 0.49f, 0) + new Vector3(i, 0, j));
-                }
-            }
-        }
     }
 
     public void ShowTiles()
