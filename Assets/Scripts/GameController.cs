@@ -32,7 +32,6 @@ public class GameController : MonoBehaviour
     {
         if (!gameFrozen)
         {
-
             if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0) SceneManager.LoadScene(1);
 
             if (playerTurn)
@@ -43,7 +42,6 @@ public class GameController : MonoBehaviour
                     Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
-                    //if you clicked the floor
                     if (Physics.Raycast(ray, out hit, 100)
                         && !EventSystem.current.IsPointerOverGameObject()
                         )

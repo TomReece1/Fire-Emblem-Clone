@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,6 +18,12 @@ public class CharBehaviour : MonoBehaviour
     public int hp = 100;
     private int dmg = 10;
 
+    public float speed = 1f;
+    private Vector3 target;
+    //public GameObject MoveTargetTile;
+    public bool isMoving = false;
+
+
     public int turnStage = 0;
 
     public AudioSource MoveAudioSource;
@@ -30,7 +37,88 @@ public class CharBehaviour : MonoBehaviour
 
     private void Update()
     {
+        if (isMoving)
+        {
+            // Move our position a step closer to the target.
+            var step = speed * Time.deltaTime; 
+            transform.position = Vector3.MoveTowards(transform.position, target, step);
 
+            // Check if the position of the cube and sphere are approximately equal.
+            if (Vector3.Distance(transform.position, target) < 0.001f)
+            {
+                // Put it on the right spot and stop moving
+                transform.position = target;
+                isMoving = false;
+            }
+        }
+    }
+
+    IEnumerator ExecuteAfterTime(float time, List<Vector3> route, int iteration)
+    {
+        yield return new WaitForSeconds(time);
+        MoveOneTile(route[iteration] + new Vector3(0, 0.49f, 0));
+    }
+
+    IEnumerator RedsAfterTime(float time)
+    {
+        //Place attackable reds after using movement
+        yield return new WaitForSeconds(time);
+                    for (int i = -r; i <= r; i++)
+            {
+                for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
+                {
+                    if (i != 0 || j != 0) BoardTiles.AddTile("red", transform.position, transform.position - new Vector3(0, 0.49f, 0) + new Vector3(i, 0, j));
+                }
+            }
+    }
+
+    public void MoveMe()
+    {
+        Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100)
+            && hit.transform.gameObject.name == "BlueTile(Clone)"
+            && !EventSystem.current.IsPointerOverGameObject()
+            )
+        {
+            List<Vector3> route = makeRoute(hit.transform.position);
+            MoveOneTile(route[route.Count - 1] + new Vector3(0, 0.49f, 0));
+            for (int i = route.Count - 2; i >= 0; i--)
+            {
+                StartCoroutine(ExecuteAfterTime((route.Count - 1 - i) / 4f, route, i));
+            }
+            StartCoroutine(RedsAfterTime(route.Count / 4f));
+            MoveAudioSource.Play();
+            turnStage = 1;
+
+            BoardTiles.ClearAllTiles();
+        }
+    }
+
+    private void MoveOneTile(Vector3 coord)
+    {
+        target = coord;
+        isMoving = true;
+    }
+
+    private List<Vector3> makeRoute(Vector3 endCoord)
+    {
+        List<Vector3> route = new List<Vector3>();
+        route.Add(endCoord);
+
+        Vector3 prevCoord = BoardTiles.CheckForObjectOnCoord(endCoord, "Tile").GetComponent<TileDirections>().prevCoord;
+        route.Add(prevCoord);
+
+        do
+        {
+            prevCoord = BoardTiles.CheckForObjectOnCoord(prevCoord, "Tile").GetComponent<TileDirections>().prevCoord;
+            route.Add(prevCoord);
+        }
+        while (prevCoord.x != transform.position.x || prevCoord.z != transform.position.z);
+
+        return route;
     }
 
     public void Wait()
@@ -45,12 +133,6 @@ public class CharBehaviour : MonoBehaviour
 
     public void Attack()
     {
-        //We have a seperate check if in range function
-        //It doesn't matter if the enemy is on a blue or red tile
-        //you click attack on the tile
-        //if there's an enemy on it (loop through enemies and if (x,z) match the hit tile) && it's in range abs(x-x) + abs(z-z) <= r
-        //let's stick with the requirement of hitting a tile tag for now for easy extraction of (x,z) plus it's visually more obvious for the player
-
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -61,11 +143,9 @@ public class CharBehaviour : MonoBehaviour
             && CheckInRange(hit.transform.position)
             && !EventSystem.current.IsPointerOverGameObject())
         {
-
             BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp -= dmg;
             HitAudioSource.Play();
             Wait();
-
         }
     }
 
@@ -75,38 +155,11 @@ public class CharBehaviour : MonoBehaviour
         else return false;
     }
 
-    public void MoveMe()
-    {
-        Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
-        Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 100)
-            && hit.transform.gameObject.name == "BlueTile(Clone)"
-            && !EventSystem.current.IsPointerOverGameObject()
-            )
-        {
-            transform.position = hit.transform.position + new Vector3(0, 0.49f, 0);
-            MoveAudioSource.Play();
-            turnStage = 1;
-
-            BoardTiles.ClearAllTiles();
-            //Place attackable red tiles after using all movement
-            for (int i = -r; i <= r; i++)
-            {
-                for (int j = -(r - Mathf.Abs(i)); j <= (r - Mathf.Abs(i)); j++)
-                {
-                    if (i != 0 || j != 0) BoardTiles.AddTile("red", transform.position - new Vector3(0, 0.49f, 0) + new Vector3(i, 0, j));
-                }
-            }
-        }
-    }
-
     public void ShowTiles()
     {
         BoardTiles.ClearAllTilesImmediate();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
-        BoardTiles.AddTile("blue", root);
+        BoardTiles.AddTile("blue", root, root);
 
         int m_rem = m;
 
@@ -118,25 +171,25 @@ public class CharBehaviour : MonoBehaviour
             {
                 //Check if the tile directly above has no obstacle and no tile
                 //If it's empty then place a blue on it if i<=m, else a red
-                CheckAndPlace(tile.transform.position + new Vector3(0, 0, 1), i);
-                CheckAndPlace(tile.transform.position + new Vector3(0, 0, -1), i);
-                CheckAndPlace(tile.transform.position + new Vector3(-1, 0, 0), i);
-                CheckAndPlace(tile.transform.position + new Vector3(1, 0, 0), i);
+                CheckAndPlace(tile.transform.position, new Vector3(0, 0, 1), i);
+                CheckAndPlace(tile.transform.position, new Vector3(0, 0, -1), i);
+                CheckAndPlace(tile.transform.position, new Vector3(-1, 0, 0), i);
+                CheckAndPlace(tile.transform.position, new Vector3(1, 0, 0), i);
 
             }
         }
     }
 
-    private void CheckAndPlace(Vector3 coord, int iteration)
+    private void CheckAndPlace(Vector3 prevCoord, Vector3 translation, int iteration)
     {
         //On iterations 1 to m, check !obstacle, !enemy, !tile
         //On iterations m+1 to m+r, just check !tile
         //Only place blues before iteration m
         //Only place reds after iteration m
-        if (BoardTiles.CheckForObjectOnCoord(coord, "Tile") == null)
+        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null)
         {
-            if (iteration <= m && BoardTiles.CheckForObjectOnCoord(coord, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(coord, "Enemy") == null) BoardTiles.AddTile("blue", coord);
-            else if (iteration > m) BoardTiles.AddTile("red", coord);
+            if (iteration <= m && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Enemy") == null) BoardTiles.AddTile("blue", prevCoord, prevCoord + translation);
+            else if (iteration > m) BoardTiles.AddTile("red", prevCoord, prevCoord + translation);
         };
     }
 
