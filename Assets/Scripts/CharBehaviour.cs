@@ -40,8 +40,9 @@ public class CharBehaviour : MonoBehaviour
         if (isMoving)
         {
             // Move our position a step closer to the target.
-            var step = speed * Time.deltaTime; 
-            transform.position = Vector3.MoveTowards(transform.position, target, step);
+            var step = speed * Time.deltaTime;
+            //transform.position = Vector3.MoveTowards(transform.position, target, step);
+            transform.position = target;
 
             // Check if the position of the cube and sphere are approximately equal.
             if (Vector3.Distance(transform.position, target) < 0.001f)
@@ -85,6 +86,7 @@ public class CharBehaviour : MonoBehaviour
         {
             List<Vector3> route = makeRoute(hit.transform.position);
             MoveOneTile(route[route.Count - 1] + new Vector3(0, 0.49f, 0));
+
             for (int i = route.Count - 2; i >= 0; i--)
             {
                 StartCoroutine(ExecuteAfterTime((route.Count - 1 - i) / 4f, route, i));
