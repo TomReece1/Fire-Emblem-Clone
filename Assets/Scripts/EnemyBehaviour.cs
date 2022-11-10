@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+//using TMPro;
 
 public class EnemyBehaviour : MonoBehaviour
 {
     private GameController GameController;
     private BoardTiles BoardTiles;
-
+    
     public int hp = 20;
+    public int currentHealth;
     private int dmg = 5;
     private int m = 5;
     private int r = 2;
+    //private TextMeshProUGUI healthBarText
+        
+
+    public HealthBar healthBar;
 
     private AudioSource DeathAudioSource;
 
@@ -21,11 +27,19 @@ public class EnemyBehaviour : MonoBehaviour
         DeathAudioSource = GetComponent<AudioSource>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
+        currentHealth = hp;
+        healthBar.SetMaxHealth(hp);
+        //healthBarText = GetComponent<TextMeshProUGUI>();
     }
+
+    
 
     void Update()
     {
         if (hp<=0) Die();
+        currentHealth = hp;
+        healthBar.SetHealth(currentHealth);
+        //healthBarText.text = currentHealth.ToString();  
     }
 
     public void MakeMove()
@@ -155,7 +169,6 @@ public class EnemyBehaviour : MonoBehaviour
     {
         character.GetComponent<CharBehaviour>().hp -= dmg;
     }
-
 
     public void Die()
     {

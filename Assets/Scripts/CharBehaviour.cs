@@ -17,7 +17,11 @@ public class CharBehaviour : MonoBehaviour
     private int r = 3;
 
     public int hp = 100;
-    private int dmg = 10;
+    public int dmg = 10;
+    public int currentHealth;
+
+
+    public HealthBar healthBar;
 
     public float speed = 1f;
     private Vector3 target;
@@ -30,14 +34,20 @@ public class CharBehaviour : MonoBehaviour
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
+    
     private void Awake()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
+        currentHealth = hp;
+        healthBar.SetMaxHealth(hp);
     }
 
-    private void Update()
+
+private void Update()
     {
+        currentHealth = hp;
+        healthBar.SetHealth(currentHealth);
         if (isMoving)
         {
             // Move our position a step closer to the target.
