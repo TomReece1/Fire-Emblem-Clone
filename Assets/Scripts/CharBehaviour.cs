@@ -32,7 +32,15 @@ public class CharBehaviour : MonoBehaviour
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
-    
+    public void Init(int m, int r, int hp, int dmg)
+    {
+        this.m = m;
+        this.r = r;
+        this.hp = hp;
+        this.dmg = dmg;
+        healthBar.SetMaxHealth(hp);
+    }
+
     private void Awake()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
