@@ -8,11 +8,13 @@ public class EnemyBehaviour : MonoBehaviour
 {
     private GameController GameController;
     private BoardTiles BoardTiles;
-
+    
     public int hp = 20;
     private int dmg = 5;
     private int m = 5;
     private int r = 2;
+
+    public HealthBar healthBar;
 
     private AudioSource DeathAudioSource;
 
@@ -21,11 +23,15 @@ public class EnemyBehaviour : MonoBehaviour
         DeathAudioSource = GetComponent<AudioSource>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
+        healthBar.SetMaxHealth(hp);
     }
+
+    
 
     void Update()
     {
         if (hp<=0) Die();
+        healthBar.SetHealth(hp);  
     }
 
     public void MakeMove()
@@ -155,7 +161,6 @@ public class EnemyBehaviour : MonoBehaviour
     {
         character.GetComponent<CharBehaviour>().hp -= dmg;
     }
-
 
     public void Die()
     {
