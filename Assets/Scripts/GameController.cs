@@ -21,10 +21,28 @@ public class GameController : MonoBehaviour
 
     public bool gameFrozen = false;
 
+    public GameObject BlueUnitPrefab;
+    public GameObject BlueSwordUnitPrefab;
+    public GameObject BlueLanceUnitPrefab;
+    public GameObject BlueAxeUnitPrefab;
+
     // Start is called before the first frame update
     void Awake()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>(); 
+        GameObject unitGO;
+        unitGO = Instantiate(BlueLanceUnitPrefab);
+        unitGO.GetComponent<CharBehaviour>().Init(7, 2, 30, 9);
+        unitGO.transform.position = new Vector3(1, 0.5f, 1);
+
+        unitGO = Instantiate(BlueSwordUnitPrefab);
+        unitGO.GetComponent<CharBehaviour>().Init(8, 1, 40, 8);
+        unitGO.transform.position = new Vector3(0, 0.5f, 4);
+
+        unitGO = Instantiate(BlueAxeUnitPrefab);
+        unitGO.GetComponent<CharBehaviour>().Init(6, 1, 50, 10);
+        unitGO.transform.position = new Vector3(2, 0.5f, 6);
+
     }
 
     // Update is called once per frame
@@ -88,6 +106,11 @@ public class GameController : MonoBehaviour
                 EndTurn();
             }
         }
+    }
+
+    public void SpawnUnit()
+    {
+
     }
 
     public void FreezeGame()
