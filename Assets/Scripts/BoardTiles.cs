@@ -58,7 +58,6 @@ public class BoardTiles : MonoBehaviour
             else if (colour == "red") tile = Instantiate(RedTilePrefab);
             else tile = Instantiate(WhiteTilePrefab);
 
-            tile.layer = LayerMask.NameToLayer("Tile");
             tile.transform.position = coord;
             tile.GetComponent<TileDirections>().prevCoord = prevCoord;
         }

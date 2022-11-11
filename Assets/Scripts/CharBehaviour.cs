@@ -18,8 +18,6 @@ public class CharBehaviour : MonoBehaviour
 
     public int hp = 100;
     public int dmg = 10;
-    public int currentHealth;
-
 
     public HealthBar healthBar;
 
@@ -39,15 +37,13 @@ public class CharBehaviour : MonoBehaviour
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
-        currentHealth = hp;
         healthBar.SetMaxHealth(hp);
     }
 
 
 private void Update()
     {
-        currentHealth = hp;
-        healthBar.SetHealth(currentHealth);
+        healthBar.SetHealth(hp);
         if (isMoving)
         {
             // Move our position a step closer to the target.
