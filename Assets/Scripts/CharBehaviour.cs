@@ -8,20 +8,21 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CharBehaviour : MonoBehaviour
+public abstract class CharBehaviour : MonoBehaviour
 {
     private BoardTiles BoardTiles;
     private GameController GameController;
-    private int m = 5;
-    //private int m_rem = 0;
-    private int r = 3;
+    public abstract int m { get; }
+    public abstract int r { get; }
+    public abstract int hp { get; }
+    public abstract int dmg { get; }
 
-    public int hp = 100;
-    public int dmg = 10;
+    //private int m_rem = 0;
+
 
     public HealthBar healthBar;
 
-    public float speed = 1f;
+    //public float speed = 1f;
     private Vector3 target;
     //public GameObject MoveTargetTile;
     public bool isMoving = false;
@@ -32,14 +33,14 @@ public class CharBehaviour : MonoBehaviour
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
-    public void Init(int m, int r, int hp, int dmg)
+/*    public void Init(int m, int r, int hp, int dmg)
     {
         this.m = m;
         this.r = r;
         this.hp = hp;
         this.dmg = dmg;
         healthBar.SetMaxHealth(hp);
-    }
+    }*/
 
     private void Awake()
     {
@@ -55,7 +56,7 @@ private void Update()
         if (isMoving)
         {
             // Move our position a step closer to the target.
-            var step = speed * Time.deltaTime;
+            //var step = speed * Time.deltaTime;
             //transform.position = Vector3.MoveTowards(transform.position, target, step);
             transform.position = target;
 
