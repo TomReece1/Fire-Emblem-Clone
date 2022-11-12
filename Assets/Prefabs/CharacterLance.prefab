@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 5270371438501939829}
   - component: {fileID: 9036481566963183446}
   - component: {fileID: 8290636360262630318}
+  - component: {fileID: 1093438189857889765}
   - component: {fileID: 3634900268149151118}
   - component: {fileID: 864996204857452050}
   - component: {fileID: 2183978928260667361}
@@ -225,7 +226,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &3634900268149151118
+--- !u!114 &1093438189857889765
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -233,6 +234,26 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401524582607107968}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7b2c11b03335a4c860814db45b4ea1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 100
+  dmg: 10
+  healthBar: {fileID: 3511305992080316971, guid: aa24acb8f12860c49a8a547091d6a2ad, type: 3}
+  speed: 1
+  isMoving: 0
+  turnStage: 0
+  MoveAudioSource: {fileID: 864996204857452050}
+  HitAudioSource: {fileID: 2183978928260667361}
+--- !u!114 &3634900268149151118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401524582607107968}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d9aaa89a8c2d054d92e980a389d2f61, type: 3}
   m_Name: 

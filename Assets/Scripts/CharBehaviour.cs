@@ -22,8 +22,8 @@ public class CharBehaviour : MonoBehaviour
     public HealthBar healthBar;
 
     public float speed = 1f;
-    private Vector3 target;
-    //public GameObject MoveTargetTile;
+
+    protected Vector3 target;
     public bool isMoving = false;
 
 
@@ -51,23 +51,22 @@ public class CharBehaviour : MonoBehaviour
 
 private void Update()
     {
-        healthBar.SetHealth(hp);
+/*        healthBar.SetHealth(hp);
         if (isMoving)
         {
-            // Move our position a step closer to the target.
             var step = speed * Time.deltaTime;
-            //transform.position = Vector3.MoveTowards(transform.position, target, step);
             transform.position = target;
 
-            // Check if the position of the cube and sphere are approximately equal.
             if (Vector3.Distance(transform.position, target) < 0.001f)
             {
-                // Put it on the right spot and stop moving
                 transform.position = target;
                 isMoving = false;
             }
-        }
+        }*/
     }
+
+
+
 
     IEnumerator ExecuteAfterTime(float time, List<Vector3> route, int iteration)
     {
@@ -90,6 +89,7 @@ private void Update()
 
     public void MoveMe()
     {
+        Debug.Log("MoveMe started");
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -99,7 +99,9 @@ private void Update()
             && !EventSystem.current.IsPointerOverGameObject()
             )
         {
+            Debug.Log("When you called MoveMe you were on a Blue Tile");
             List<Vector3> route = makeRoute(hit.transform.position);
+            Debug.Log($"Made a route {route[1]}");
             MoveOneTile(route[route.Count - 1] + new Vector3(0, 0.49f, 0));
 
             for (int i = route.Count - 2; i >= 0; i--)
@@ -116,8 +118,10 @@ private void Update()
 
     private void MoveOneTile(Vector3 coord)
     {
+        Debug.Log("MoveOneTile started");
         target = coord;
         isMoving = true;
+        Debug.Log($"target: {target}, isMoving: {isMoving}");
     }
 
     private List<Vector3> makeRoute(Vector3 endCoord)

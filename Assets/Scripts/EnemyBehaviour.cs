@@ -80,10 +80,6 @@ public class EnemyBehaviour : MonoBehaviour
 
         for (int i = 1; i <= (m_rem + r); i++)
         {
-
-
-            
-
             foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
             {
 
