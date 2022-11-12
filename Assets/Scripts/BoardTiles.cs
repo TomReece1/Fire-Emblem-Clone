@@ -42,6 +42,7 @@ public class BoardTiles : MonoBehaviour
 
     public void ClearAllTilesImmediate()
     {
+        Debug.Log("ClearAllTilesImmediate start");
         foreach (GameObject tile in GameObject.FindGameObjectsWithTag("Tile"))
         {
             DestroyImmediate(tile);

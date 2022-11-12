@@ -8,14 +8,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public abstract class CharBehaviour : MonoBehaviour
+public class CharBehaviour : MonoBehaviour
 {
-    private BoardTiles BoardTiles;
-    private GameController GameController;
-    public abstract int m { get; }
-    public abstract int r { get; }
-    public abstract int hp { get; }
-    public abstract int dmg { get; }
+    public BoardTiles BoardTiles;
+    public GameController GameController;
+    public int m;
+    public int r;
+    public int hp;
+    public int dmg;
 
     //private int m_rem = 0;
 
@@ -23,7 +23,7 @@ public abstract class CharBehaviour : MonoBehaviour
     public HealthBar healthBar;
 
     //public float speed = 1f;
-    private Vector3 target;
+    protected Vector3 target;
     //public GameObject MoveTargetTile;
     public bool isMoving = false;
 
@@ -44,9 +44,10 @@ public abstract class CharBehaviour : MonoBehaviour
 
     private void Awake()
     {
+/*        Debug.Log("CharBehaviour start");
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
-        healthBar.SetMaxHealth(hp);
+        healthBar.SetMaxHealth(hp);*/
     }
 
 
@@ -175,6 +176,8 @@ private void Update()
 
     public void ShowTiles()
     {
+        Debug.Log("ShowTiles start");
+        Debug.Log(BoardTiles);
         BoardTiles.ClearAllTilesImmediate();
         Vector3 root = transform.position - new Vector3(0, 0.49f, 0);
         BoardTiles.AddTile("blue", root, root);

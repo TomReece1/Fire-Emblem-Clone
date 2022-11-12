@@ -30,18 +30,12 @@ public class GameController : MonoBehaviour
     void Awake()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>(); 
-        GameObject unitGO;
-        unitGO = Instantiate(BlueLanceUnitPrefab);
-        unitGO.GetComponent<CharBehaviour>().Init(7, 2, 30, 9);
-        unitGO.transform.position = new Vector3(1, 0.5f, 1);
 
+        GameObject unitGO;
         unitGO = Instantiate(BlueSwordUnitPrefab);
-        unitGO.GetComponent<CharBehaviour>().Init(8, 1, 40, 8);
+        unitGO.GetComponent<SwordUnit>().Init(5, 1, 50, 9);
         unitGO.transform.position = new Vector3(0, 0.5f, 4);
 
-        unitGO = Instantiate(BlueAxeUnitPrefab);
-        unitGO.GetComponent<CharBehaviour>().Init(6, 1, 50, 10);
-        unitGO.transform.position = new Vector3(2, 0.5f, 6);
 
     }
 
@@ -77,7 +71,6 @@ public class GameController : MonoBehaviour
                             && (RoundedHitCoord.x != selectedUnit.transform.position.x || RoundedHitCoord.z != selectedUnit.transform.position.z)
                             ))
                         {
-                            Debug.Log("You tried to reselect a different unit");
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
                             CharBehaviour.ShowTiles();
