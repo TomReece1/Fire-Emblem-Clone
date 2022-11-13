@@ -244,9 +244,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 100
+  m_MaxValue: 50
   m_WholeNumbers: 0
-  m_Value: 100
+  m_Value: 50
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -263,7 +263,6 @@ GameObject:
   - component: {fileID: 3543138904280395542}
   - component: {fileID: 2625511790223762056}
   - component: {fileID: -5843106944190585930}
-  - component: {fileID: 7365533843894101646}
   - component: {fileID: 7156826611402522210}
   - component: {fileID: 2938948126499468990}
   m_Layer: 0
@@ -366,6 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bcc10caf08c474da93b8ed9662bee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitName: 
   hp: 100
   dmg: 10
   healthBar: {fileID: 3511305992080316971}
@@ -374,26 +374,7 @@ MonoBehaviour:
   turnStage: 0
   MoveAudioSource: {fileID: 7156826611402522210}
   HitAudioSource: {fileID: 2938948126499468990}
---- !u!114 &7365533843894101646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5654829385837613971}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d9aaa89a8c2d054d92e980a389d2f61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 60
-  dmg: 8
-  healthBar: {fileID: 3511305992080316971}
-  speed: 1
-  isMoving: 0
-  turnStage: 0
-  MoveAudioSource: {fileID: 7156826611402522210}
-  HitAudioSource: {fileID: 2938948126499468990}
+  weapon: sword
 --- !u!82 &7156826611402522210
 AudioSource:
   m_ObjectHideFlags: 0

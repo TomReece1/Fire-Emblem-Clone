@@ -12,10 +12,11 @@ public class CharBehaviour : MonoBehaviour
 {
     private BoardTiles BoardTiles;
     private GameController GameController;
-    private int m = 5;
-    //private int m_rem = 0;
-    private int r = 3;
 
+    public string unitName;
+    //public string weapon;
+    private int m = 5;
+    private int r = 3;
     public int hp = 100;
     public int dmg = 10;
 
@@ -32,8 +33,9 @@ public class CharBehaviour : MonoBehaviour
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
-    public void Init(int m, int r, int hp, int dmg)
+    public void Init(string name, int m, int r, int hp, int dmg)
     {
+        this.unitName = name;
         this.m = m;
         this.r = r;
         this.hp = hp;
