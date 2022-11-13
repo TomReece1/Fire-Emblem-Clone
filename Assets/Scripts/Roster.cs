@@ -22,6 +22,8 @@ public class Roster : MonoBehaviour
         unitList.Add(unit);
     }
 
+    //Modify a unit? After a stat increase, they should spawn with it in the next level
+
     public void RemoveUnit(int index)
     {
         unitList.Remove(unitList[index]);

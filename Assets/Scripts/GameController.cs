@@ -119,11 +119,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void SpawnUnit()
-    {
-
-    }
-
     public void FreezeGame()
     {
         gameFrozen = true;
