@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static Roster;
 
 public class CharBehaviour : MonoBehaviour
 {
+    private Roster Roster;
     private BoardTiles BoardTiles;
     private GameController GameController;
 
@@ -17,8 +20,18 @@ public class CharBehaviour : MonoBehaviour
     //public string weapon;
     private int m = 5;
     private int r = 3;
-    public int hp = 100;
+    public int hp;
+    public int max_hp;
     public int dmg = 10;
+
+    public int level;
+    public int exp;
+    public int str;
+    public int def;
+    public int spd;
+    public int str_g;
+    public int def_g;
+    public int spd_g;
 
     public HealthBar healthBar;
 
@@ -33,42 +46,42 @@ public class CharBehaviour : MonoBehaviour
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
 
-    public void Init(string name, int m, int r, int hp, int dmg)
+    public void Init(string nameToInit)
     {
-        this.unitName = name;
-        this.m = m;
-        this.r = r;
-        this.hp = hp;
-        this.dmg = dmg;
-        healthBar.SetMaxHealth(hp);
+        foreach (var unitInfo in Roster.unitList)
+        {
+            if (unitInfo.unitName == nameToInit)
+            {
+                unitName = unitInfo.unitName;
+                m = unitInfo.m;
+                r = unitInfo.r;
+                max_hp = unitInfo.max_hp;
+                hp = max_hp;
+                dmg = unitInfo.dmg;
+
+                level = unitInfo.level;
+                exp = unitInfo.exp;
+                str = unitInfo.str;
+                def = unitInfo.def;
+                spd = unitInfo.spd;
+                str_g = unitInfo.str_g;
+                def_g = unitInfo.def_g;
+                spd_g = unitInfo.spd_g;
+            }
+        }
+
+        healthBar.SetMaxHealth(max_hp);
     }
 
     private void Awake()
     {
+        Roster = GameObject.Find("GameController").GetComponent<Roster>();
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
         healthBar.SetMaxHealth(hp);
+        
+
     }
-
-
-private void Update()
-    {
-/*        healthBar.SetHealth(hp);
-        if (isMoving)
-        {
-            var step = speed * Time.deltaTime;
-            transform.position = target;
-
-            if (Vector3.Distance(transform.position, target) < 0.001f)
-            {
-                transform.position = target;
-                isMoving = false;
-            }
-        }*/
-    }
-
-
-
 
     IEnumerator ExecuteAfterTime(float time, List<Vector3> route, int iteration)
     {
@@ -167,6 +180,27 @@ private void Update()
             && !EventSystem.current.IsPointerOverGameObject())
         {
             BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp -= dmg;
+            
+            if (BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp <= 0)
+            {
+                foreach (var unitInfo in Roster.unitList)
+                {
+                    if (unitInfo.unitName == unitName)
+                    {
+                        unitInfo.exp += 50;
+                        if (unitInfo.exp >= 100)
+                        {
+                            unitInfo.LevelUp();
+                            int curr_hp = hp;
+                            Init(unitName);
+                            hp = curr_hp;
+                        }
+
+                    }
+                }
+                
+                
+            }
             HitAudioSource.Play();
             Wait();
         }

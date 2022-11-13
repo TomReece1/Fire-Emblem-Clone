@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
     private Dictionary<string, GameObject> Classes = new Dictionary<string, GameObject>();
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         Roster = GameObject.Find("GameController").GetComponent<Roster>();
@@ -44,16 +44,12 @@ public class GameController : MonoBehaviour
         Classes.Add("lance", BlueLanceUnitPrefab);
         Classes.Add("axe", BlueAxeUnitPrefab);
 
-        Roster.AddUnit("Tom", "sword", 7,2,30,9);
-        Roster.AddUnit("Adam", "lance", 8,1,40,8);
-        Roster.AddUnit("Jarreth", "axe", 6,1,50,10);
-
         for (int i = 0; i < SpawnVectors.Count; i++)
         {
             GameObject unitGO;
             var unit = Roster.unitList[i];
             unitGO = Instantiate(Classes[unit.weapon]);
-            unitGO.GetComponent<CharBehaviour>().Init(unit.unitName, unit.m, unit.r, unit.hp, unit.dmg);
+            unitGO.GetComponent<CharBehaviour>().Init(unit.unitName);
             unitGO.transform.position = SpawnVectors[i];
         }
     }
