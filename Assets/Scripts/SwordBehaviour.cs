@@ -6,6 +6,8 @@ using static UnityEngine.GraphicsBuffer;
 public class SwordBehaviour : CharBehaviour
 {
 
+    public string weapon = "sword";
+
     // Start is called before the first frame update
     void Start()
     {

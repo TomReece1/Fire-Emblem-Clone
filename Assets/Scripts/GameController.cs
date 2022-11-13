@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    private Roster Roster;
     private BoardTiles BoardTiles;
     private CharBehaviour CharBehaviour;
     private Camera cameraComponent;
@@ -26,24 +27,35 @@ public class GameController : MonoBehaviour
     public GameObject BlueLanceUnitPrefab;
     public GameObject BlueAxeUnitPrefab;
 
+    private List<Vector3> SpawnVectors = new List<Vector3>();
+    private Dictionary<string, GameObject> Classes = new Dictionary<string, GameObject>();
+
     // Start is called before the first frame update
     void Awake()
     {
-        BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>(); 
-        GameObject unitGO;
+        BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
+        Roster = GameObject.Find("GameController").GetComponent<Roster>();
 
-        unitGO = Instantiate(BlueSwordUnitPrefab);
-        unitGO.GetComponent<SwordBehaviour>().Init(7, 2, 30, 9);
-        unitGO.transform.position = new Vector3(1, 0.5f, 1);
+        SpawnVectors.Add(new Vector3(1, 0.5f, 1));
+        SpawnVectors.Add(new Vector3(2, 0.5f, 3));
+        SpawnVectors.Add(new Vector3(1, 0.5f, 7));
 
-        unitGO = Instantiate(BlueLanceUnitPrefab);
-        unitGO.GetComponent<LanceBehaviour>().Init(8, 1, 40, 8);
-        unitGO.transform.position = new Vector3(0, 0.5f, 4);
+        Classes.Add("sword", BlueSwordUnitPrefab);
+        Classes.Add("lance", BlueLanceUnitPrefab);
+        Classes.Add("axe", BlueAxeUnitPrefab);
 
-        unitGO = Instantiate(BlueAxeUnitPrefab);
-        unitGO.GetComponent<AxeBehaviour>().Init(6, 1, 50, 10);
-        unitGO.transform.position = new Vector3(2, 0.5f, 6);
+        Roster.AddUnit("Tom", "sword", 7,2,30,9);
+        Roster.AddUnit("Adam", "lance", 8,1,40,8);
+        Roster.AddUnit("Jarreth", "axe", 6,1,50,10);
 
+        for (int i = 0; i < SpawnVectors.Count; i++)
+        {
+            GameObject unitGO;
+            var unit = Roster.unitList[i];
+            unitGO = Instantiate(Classes[unit.weapon]);
+            unitGO.GetComponent<CharBehaviour>().Init(unit.unitName, unit.m, unit.r, unit.hp, unit.dmg);
+            unitGO.transform.position = SpawnVectors[i];
+        }
     }
 
     // Update is called once per frame
@@ -74,40 +86,18 @@ public class GameController : MonoBehaviour
                             (selectedUnit == null)
                             ||
                             (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character")
-
                             && (RoundedHitCoord.x != selectedUnit.transform.position.x || RoundedHitCoord.z != selectedUnit.transform.position.z)
                             ))
                         {
-                            Debug.Log("You tried to reselect a different unit");
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
-                            Debug.Log($"You selected a unit {selectedUnit}");
-
-                            if (selectedUnit.name == "CharacterSword(Clone)")
-                            {
-                                Debug.Log("Unit is a sword");
-                                CharBehaviour = selectedUnit.GetComponent<SwordBehaviour>();
-                            }
-                            else if (selectedUnit.name == "CharacterLance(Clone)")
-                            {
-                                Debug.Log("Unit is a lance");
-                                CharBehaviour = selectedUnit.GetComponent<LanceBehaviour>();
-                            }
-                            else if (selectedUnit.name == "CharacterAxe(Clone)")
-                            {
-                                Debug.Log("Unit is a axe");
-                                CharBehaviour = selectedUnit.GetComponent<AxeBehaviour>();
-                            }
-
-                            Debug.Log($"You've got it's script {CharBehaviour}");
+                            CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
                             CharBehaviour.ShowTiles();
-                            Debug.Log("ShowTiles finished");
                         }
                         else if (
                             selectedUnit != null && CharBehaviour.turnStage == 0
                             && BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Tile").name == "BlueTile(Clone)"
                             )
                         {
-                            Debug.Log("You tried to move the unit");
                             CharBehaviour.MoveMe();
                         }
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();

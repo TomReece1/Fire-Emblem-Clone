@@ -208,7 +208,6 @@ GameObject:
   - component: {fileID: 9092410830892413208}
   - component: {fileID: 2470298393038355764}
   - component: {fileID: -15264602781588282}
-  - component: {fileID: 6177382801539717683}
   - component: {fileID: 2833806160619329331}
   - component: {fileID: 6376025111082158192}
   m_Layer: 0
@@ -311,29 +310,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d932ab0adca47b41a4e2e7231ddc64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitName: 
   hp: 100
   dmg: 10
   healthBar: {fileID: 3511305992080316971, guid: aa24acb8f12860c49a8a547091d6a2ad, type: 3}
-  speed: 1
-  isMoving: 0
-  turnStage: 0
-  MoveAudioSource: {fileID: 2833806160619329331}
-  HitAudioSource: {fileID: 6376025111082158192}
---- !u!114 &6177382801539717683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1163585484881405495}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d9aaa89a8c2d054d92e980a389d2f61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 60
-  dmg: 8
-  healthBar: {fileID: 7742398389686788516}
   speed: 1
   isMoving: 0
   turnStage: 0
