@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     private Camera cameraComponent;
     public GameObject TurnCounter;
     public GameObject ActiveTeam;
+    public PanelOpener PanelOpener;
 
     private GameObject selectedUnit;
 
@@ -35,6 +36,7 @@ public class GameController : MonoBehaviour
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         Roster = GameObject.Find("GameController").GetComponent<Roster>();
+        PanelOpener = GameObject.Find("StatsPanel").GetComponent<PanelOpener>();
 
         SpawnVectors.Add(new Vector3(1, 0.5f, 1));
         SpawnVectors.Add(new Vector3(2, 0.5f, 3));
@@ -78,6 +80,7 @@ public class GameController : MonoBehaviour
                         //that was either the first unit click of the turn
                         //or this click was different than the current selectedUnit
                         //then showtiles for it and set selectedUnit and CharBehaviour
+                        //then update stats panel
                         if (
                             (selectedUnit == null)
                             ||
@@ -88,6 +91,7 @@ public class GameController : MonoBehaviour
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
                             CharBehaviour.ShowTiles();
+                            PanelOpener.UpdateStats(CharBehaviour);
                         }
                         else if (
                             selectedUnit != null && CharBehaviour.turnStage == 0
