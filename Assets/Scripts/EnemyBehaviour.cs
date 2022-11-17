@@ -67,7 +67,6 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void ShowTiles()
     {
-        Debug.Log("ShowTiles started");
 
         BoardTiles.ClearAllTilesImmediate();
 
@@ -97,7 +96,6 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void CheckAndPlace(Vector3 prevCoord, Vector3 translation, int iteration)
     {
-        //Debug.Log("CheckAndPlace started");
         //On iterations 1 to m, check !obstacle, !enemy, !tile
         //On iterations m+1 to m+r, just check !tile
         //Only place blues before iteration m

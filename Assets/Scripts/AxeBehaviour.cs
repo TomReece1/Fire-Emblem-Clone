@@ -1,35 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using static UnityEngine.GraphicsBuffer;
 
 public class AxeBehaviour : CharBehaviour
 {
-
-    // Start is called before the first frame update
-    void Start()
+    public override void Special()
     {
-        
-    }
+        Debug.Log("Used axe guy's special move, reckless attack");
 
-    // Update is called once per frame
-    void Update()
-    {
-        healthBar.SetHealth(hp);
-        if (isMoving)
+        Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
+        Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100)
+            && hit.transform.gameObject.CompareTag("Tile")
+            && BoardTiles.CheckForEnemyOnCoord(hit.transform.position) != null
+            && CheckInRange(hit.transform.position)
+            && !EventSystem.current.IsPointerOverGameObject())
         {
-            // Move our position a step closer to the target.
-            var step = speed * Time.deltaTime;
-            //transform.position = Vector3.MoveTowards(transform.position, target, step);
-            transform.position = target;
+            BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp -= dmg * 3;
+            hp -= 5;
 
-            // Check if the position of the cube and sphere are approximately equal.
-            if (Vector3.Distance(transform.position, target) < 0.001f)
+            if (BoardTiles.CheckForEnemyOnCoord(hit.transform.position).GetComponent<EnemyBehaviour>().hp <= 0)
             {
-                // Put it on the right spot and stop moving
-                transform.position = target;
-                isMoving = false;
+                foreach (var unitInfo in Roster.unitList)
+                {
+                    if (unitInfo.unitName == unitName)
+                    {
+                        unitInfo.exp += 50;
+                        if (unitInfo.exp >= 100)
+                        {
+                            unitInfo.LevelUp();
+                            int curr_hp = hp;
+                            Init(unitName);
+                            hp = curr_hp;
+                        }
+
+                    }
+                }
+
+
             }
+            HitAudioSource.Play();
+            Wait();
         }
     }
+
+
 }

@@ -12,9 +12,11 @@ using static Roster;
 
 public class CharBehaviour : MonoBehaviour
 {
-    private Roster Roster;
-    private BoardTiles BoardTiles;
+    private Camera cameraComponent;
+    protected Roster Roster;
+    protected BoardTiles BoardTiles;
     private GameController GameController;
+    public PanelOpener PanelOpener;
 
     public string unitName;
     //public string weapon;
@@ -33,6 +35,10 @@ public class CharBehaviour : MonoBehaviour
     public int def_g;
     public int spd_g;
 
+    public bool isSelected = false;
+
+    public bool specialSelected = false;
+
     public HealthBar healthBar;
 
     public float speed = 1f;
@@ -42,6 +48,8 @@ public class CharBehaviour : MonoBehaviour
 
 
     public int turnStage = 0;
+
+    public Vector3 originalCoord;
 
     public AudioSource MoveAudioSource;
     public AudioSource HitAudioSource;
@@ -75,13 +83,65 @@ public class CharBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        PanelOpener = GameObject.Find("StatsPanel").GetComponent<PanelOpener>();
         Roster = GameObject.Find("MainManager").GetComponent<Roster>();
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
         healthBar.SetMaxHealth(hp);
-        
-
     }
+
+    private void Update()
+    {
+        healthBar.SetHealth(hp);
+        if (isMoving)
+        {
+            // Move our position a step closer to the target.
+            var step = speed * Time.deltaTime;
+            //transform.position = Vector3.MoveTowards(transform.position, target, step);
+            transform.position = target;
+
+            // Check if the position of the cube and sphere are approximately equal.
+            if (Vector3.Distance(transform.position, target) < 0.001f)
+            {
+                // Put it on the right spot and stop moving
+                transform.position = target;
+                isMoving = false;
+            }
+        }
+
+/*        if (isSelected && Input.GetMouseButtonDown(0))
+        {
+            cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
+            Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 100)
+                && !EventSystem.current.IsPointerOverGameObject()
+                )
+            {
+                Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
+
+                if (turnStage == 0
+                && BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Tile").name == "BlueTile(Clone)"
+                )
+                {
+                    MoveMe();
+                }
+                else if (turnStage <= 1 && RoundedHitCoord.x == gameObject.transform.position.x && RoundedHitCoord.z == gameObject.transform.position.z) Wait();
+                else if (turnStage <= 1) Attack();
+            }
+
+
+        }*/
+    }
+
+
+
+    virtual public void Special()
+    {
+        Debug.Log("Used base class special");
+    }
+
 
     IEnumerator ExecuteAfterTime(float time, List<Vector3> route, int iteration)
     {
@@ -104,7 +164,7 @@ public class CharBehaviour : MonoBehaviour
 
     public void MoveMe()
     {
-        Debug.Log("MoveMe started");
+        originalCoord = transform.position;
         Camera cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -114,9 +174,7 @@ public class CharBehaviour : MonoBehaviour
             && !EventSystem.current.IsPointerOverGameObject()
             )
         {
-            Debug.Log("When you called MoveMe you were on a Blue Tile");
             List<Vector3> route = makeRoute(hit.transform.position);
-            Debug.Log($"Made a route {route[1]}");
             MoveOneTile(route[route.Count - 1] + new Vector3(0, 0.49f, 0));
 
             for (int i = route.Count - 2; i >= 0; i--)
@@ -125,18 +183,30 @@ public class CharBehaviour : MonoBehaviour
             }
             StartCoroutine(RedsAfterTime(route.Count / 4f));
             MoveAudioSource.Play();
-            turnStage = 1;
+            turnStage = 3;
 
             BoardTiles.ClearAllTiles();
         }
+
+        //Should this be a char method or a button panel gameObject script method?
+        DisplayActions();
+    }
+
+    private void DisplayActions()
+    {
+        //Display 3 buttons:
+        //"Attack"
+        //"Special" or $"{SpecialMoveName}"
+        //"Wait"
+
+        //I think they should alway exist just be hidden to start with
+
     }
 
     private void MoveOneTile(Vector3 coord)
     {
-        Debug.Log("MoveOneTile started");
         target = coord;
         isMoving = true;
-        Debug.Log($"target: {target}, isMoving: {isMoving}");
     }
 
     private List<Vector3> makeRoute(Vector3 endCoord)
@@ -160,11 +230,13 @@ public class CharBehaviour : MonoBehaviour
     public void Wait()
     {
         BoardTiles.ClearAllTiles();
-        turnStage = 2;
+        turnStage = 5;
+        isSelected = false;
         if (GameController.CheckTurnOver())
         {
             GameController.EndTurn();
         }
+        GameController.HideAllActions();
     }
 
     public void Attack()
@@ -206,7 +278,7 @@ public class CharBehaviour : MonoBehaviour
         }
     }
 
-    private bool CheckInRange(Vector3 coord)
+    protected bool CheckInRange(Vector3 coord)
     {
         if (Mathf.Abs(coord.x - transform.position.x) + Mathf.Abs(coord.z - transform.position.z) <= r) return true;
         else return false;
@@ -220,7 +292,7 @@ public class CharBehaviour : MonoBehaviour
 
         int m_rem = m;
 
-        if (turnStage > 0) m_rem = 0;
+        if (turnStage > 1) m_rem = 0;
 
         for (int i = 1; i <= (m_rem + r); i++)
         {
@@ -243,7 +315,7 @@ public class CharBehaviour : MonoBehaviour
         //On iterations m+1 to m+r, just check !tile
         //Only place blues before iteration m
         //Only place reds after iteration m
-        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null && turnStage < 2)
+        if (BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Tile") == null && turnStage < 3)
         {
             if (iteration <= m && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Obstacle") == null && BoardTiles.CheckForObjectOnCoord(prevCoord + translation, "Enemy") == null) BoardTiles.AddTile("blue", prevCoord, prevCoord + translation);
             else if (iteration > m) BoardTiles.AddTile("red", prevCoord, prevCoord + translation);
