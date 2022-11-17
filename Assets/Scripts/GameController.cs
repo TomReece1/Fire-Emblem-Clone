@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public GameObject TurnCounter;
     public GameObject ActiveTeam;
     private GameObject ActionButtonsPanel;
+    private GameObject MoveButton;
     private GameObject AttackButton;
     private GameObject SpecialButton;
     private GameObject SpecialButtonText;
@@ -47,6 +48,7 @@ public class GameController : MonoBehaviour
         Roster = GameObject.Find("MainManager").GetComponent<Roster>();
         PanelOpener = GameObject.Find("StatsPanel").GetComponent<PanelOpener>();
         ActionButtonsPanel = GameObject.Find("ActionButtonsPanel");
+        MoveButton = GameObject.Find("MoveButton");
         AttackButton = GameObject.Find("AttackButton");
         SpecialButton = GameObject.Find("SpecialButton");
         SpecialButtonText = GameObject.Find("SpecialButtonText");
@@ -113,6 +115,7 @@ public class GameController : MonoBehaviour
                                 CharBehaviour.turnStage = 1;
                                 CharBehaviour.ShowTiles();
                                 PanelOpener.UpdateStats(CharBehaviour);
+                                DisplayActions();
                             }
                         }
                         else if (
@@ -121,8 +124,12 @@ public class GameController : MonoBehaviour
                             )
                         {
                             CharBehaviour.MoveMe();
-                            DisplayActions();
+                            MoveButton.SetActive(false);
                         }
+                        else if (selectedUnit != null && CharBehaviour.turnStage <= 3
+                            && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z
+                            ) CharBehaviour.Wait();
+                        else if (selectedUnit != null && CharBehaviour.turnStage <= 3) CharBehaviour.Attack();
                         else if (selectedUnit != null && CharBehaviour.turnStage == 4 && CharBehaviour.specialSelected) CharBehaviour.Special();
                         else if (selectedUnit != null && CharBehaviour.turnStage == 4 && !CharBehaviour.specialSelected) CharBehaviour.Attack();
                     }
@@ -142,10 +149,16 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void SelectMove()
+    {
+        MoveButton.SetActive(false);
+    }
+
     public void SelectAttack()
     {
         CharBehaviour.specialSelected = false;
         CharBehaviour.turnStage = 4;
+        MoveButton.SetActive(false);
         AttackButton.SetActive(false);
         SpecialButton.SetActive(false);
     }
@@ -154,6 +167,7 @@ public class GameController : MonoBehaviour
     {
         CharBehaviour.specialSelected = true;
         CharBehaviour.turnStage = 4;
+        MoveButton.SetActive(false);
         AttackButton.SetActive(false);
         SpecialButton.SetActive(false);
     }
@@ -174,8 +188,8 @@ public class GameController : MonoBehaviour
 
     private void DisplayActions()
     {
-        CharBehaviour.Special();
         SpecialButtonText.GetComponent<TextMeshProUGUI>().text = $"{CharBehaviour.GetSpecialLabel()}";
+        MoveButton.SetActive(true);
         AttackButton.SetActive(true);
         SpecialButton.SetActive(true);
         ActionButtonsPanel.SetActive(true);
@@ -183,6 +197,7 @@ public class GameController : MonoBehaviour
 
     public void HideAllActions()
     {
+        MoveButton.SetActive(true);
         AttackButton.SetActive(true);
         SpecialButton.SetActive(true);
         ActionButtonsPanel.SetActive(false);
