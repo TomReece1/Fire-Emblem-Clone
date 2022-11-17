@@ -75,7 +75,7 @@ public class CharBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        Roster = GameObject.Find("GameController").GetComponent<Roster>();
+        Roster = GameObject.Find("MainManager").GetComponent<Roster>();
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
         healthBar.SetMaxHealth(hp);

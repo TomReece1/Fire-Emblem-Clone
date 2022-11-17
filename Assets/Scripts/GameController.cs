@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
-        Roster = GameObject.Find("GameController").GetComponent<Roster>();
+        Roster = GameObject.Find("MainManager").GetComponent<Roster>();
         PanelOpener = GameObject.Find("StatsPanel").GetComponent<PanelOpener>();
 
         SpawnVectors.Add(new Vector3(1, 0.5f, 1));
