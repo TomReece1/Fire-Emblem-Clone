@@ -6,6 +6,11 @@ using static UnityEngine.GraphicsBuffer;
 
 public class AxeBehaviour : CharBehaviour
 {
+    public override string GetSpecialLabel()
+    {
+        return "Charge";
+    } 
+
     public override void Special()
     {
         Debug.Log("Used axe guy's special move, reckless attack");

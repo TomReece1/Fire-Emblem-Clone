@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class GameController : MonoBehaviour
     private GameObject ActionButtonsPanel;
     private GameObject AttackButton;
     private GameObject SpecialButton;
+    private GameObject SpecialButtonText;
     private GameObject WaitButton;
     private GameObject BackButton;
     private PanelOpener PanelOpener;
@@ -47,6 +49,7 @@ public class GameController : MonoBehaviour
         ActionButtonsPanel = GameObject.Find("ActionButtonsPanel");
         AttackButton = GameObject.Find("AttackButton");
         SpecialButton = GameObject.Find("SpecialButton");
+        SpecialButtonText = GameObject.Find("SpecialButtonText");
         WaitButton = GameObject.Find("WaitButton");
         BackButton = GameObject.Find("BackButton");
         ActionButtonsPanel.SetActive(false);
@@ -120,8 +123,8 @@ public class GameController : MonoBehaviour
                             CharBehaviour.MoveMe();
                             DisplayActions();
                         }
-                        else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && CharBehaviour.specialSelected) CharBehaviour.Special();
-                        else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && !CharBehaviour.specialSelected) CharBehaviour.Attack();
+                        else if (selectedUnit != null && CharBehaviour.turnStage == 4 && CharBehaviour.specialSelected) CharBehaviour.Special();
+                        else if (selectedUnit != null && CharBehaviour.turnStage == 4 && !CharBehaviour.specialSelected) CharBehaviour.Attack();
                     }
                 }
 
@@ -171,6 +174,8 @@ public class GameController : MonoBehaviour
 
     private void DisplayActions()
     {
+        CharBehaviour.Special();
+        SpecialButtonText.GetComponent<TextMeshProUGUI>().text = $"{CharBehaviour.GetSpecialLabel()}";
         AttackButton.SetActive(true);
         SpecialButton.SetActive(true);
         ActionButtonsPanel.SetActive(true);
