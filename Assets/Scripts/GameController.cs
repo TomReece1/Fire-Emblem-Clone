@@ -14,9 +14,16 @@ public class GameController : MonoBehaviour
     private Camera cameraComponent;
     public GameObject TurnCounter;
     public GameObject ActiveTeam;
-    public PanelOpener PanelOpener;
+    private GameObject ActionButtonsPanel;
+    private GameObject AttackButton;
+    private GameObject SpecialButton;
+    private GameObject WaitButton;
+    private GameObject BackButton;
+    private PanelOpener PanelOpener;
 
     private GameObject selectedUnit;
+
+    
 
     public int turn = 1;
     public bool playerTurn = true;
@@ -37,6 +44,12 @@ public class GameController : MonoBehaviour
         BoardTiles = GameObject.Find("Floor").GetComponent<BoardTiles>();
         Roster = GameObject.Find("MainManager").GetComponent<Roster>();
         PanelOpener = GameObject.Find("StatsPanel").GetComponent<PanelOpener>();
+        ActionButtonsPanel = GameObject.Find("ActionButtonsPanel");
+        AttackButton = GameObject.Find("AttackButton");
+        SpecialButton = GameObject.Find("SpecialButton");
+        WaitButton = GameObject.Find("WaitButton");
+        BackButton = GameObject.Find("BackButton");
+        ActionButtonsPanel.SetActive(false);
 
         SpawnVectors.Add(new Vector3(1, 0.5f, 1));
         SpawnVectors.Add(new Vector3(2, 0.5f, 3));
@@ -86,22 +99,28 @@ public class GameController : MonoBehaviour
                             ||
                             (BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character")
                             && (RoundedHitCoord.x != selectedUnit.transform.position.x || RoundedHitCoord.z != selectedUnit.transform.position.z)
+                            && (CharBehaviour.turnStage != 3 && CharBehaviour.turnStage != 4)
                             ))
                         {
+                            Debug.Log("You've tried to select a character");
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
+                            CharBehaviour.turnStage = 1;
                             CharBehaviour.ShowTiles();
                             PanelOpener.UpdateStats(CharBehaviour);
                         }
                         else if (
-                            selectedUnit != null && CharBehaviour.turnStage == 0
+                            selectedUnit != null && CharBehaviour.turnStage == 1
                             && BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Tile").name == "BlueTile(Clone)"
                             )
                         {
                             CharBehaviour.MoveMe();
+                            DisplayActions();
                         }
-                        else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();
-                        else if (selectedUnit != null && CharBehaviour.turnStage <= 1) CharBehaviour.Attack();
+                        //else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();
+                        else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && CharBehaviour.specialSelected) CharBehaviour.Special();
+                        else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && !CharBehaviour.specialSelected) CharBehaviour.Attack();
+                        //else if (selectedUnit != null && CharBehaviour.turnStage <= 1) CharBehaviour.Special();
                     }
                 }
 
@@ -117,6 +136,53 @@ public class GameController : MonoBehaviour
                 EndTurn();
             }
         }
+    }
+
+    public void SelectAttack()
+    {
+        CharBehaviour.specialSelected = false;
+        CharBehaviour.turnStage = 4;
+        //ActionButtonsPanel.SetActive(false);
+        AttackButton.SetActive(false);
+        SpecialButton.SetActive(false);
+    }
+
+    public void SelectSpecial()
+    {
+        CharBehaviour.specialSelected = true;
+        CharBehaviour.turnStage = 4;
+        //ActionButtonsPanel.SetActive(false);
+        AttackButton.SetActive(false);
+        SpecialButton.SetActive(false);
+    }
+
+    public void SelectWait()
+    {
+        CharBehaviour.Wait();
+        
+    }
+
+    public void SelectBack()
+    {
+        CharBehaviour.turnStage = 1;
+        DisplayActions();
+        selectedUnit.transform.position = CharBehaviour.originalCoord;
+        BoardTiles.ClearAllTiles();
+        CharBehaviour.ShowTiles();
+    }
+
+    private void DisplayActions()
+    {
+        AttackButton.SetActive(true);
+        SpecialButton.SetActive(true);
+        ActionButtonsPanel.SetActive(true);
+    }
+
+    public void HideAllActions()
+    {
+        AttackButton.SetActive(true);
+        SpecialButton.SetActive(true);
+        ActionButtonsPanel.SetActive(false);
     }
 
     public void FreezeGame()
@@ -144,11 +210,13 @@ public class GameController : MonoBehaviour
             playerTurn = true;
             TurnCounter.GetComponent<Text>().text = $"Turn: {turn}";
             ActiveTeam.GetComponent<Text>().text = "Blue's turn";
+
         }
         else
         {
             playerTurn = false;
             ActiveTeam.GetComponent<Text>().text = "Red's turn";
+            HideAllActions();
         }
     }
             
@@ -156,7 +224,7 @@ public class GameController : MonoBehaviour
     {
         foreach (GameObject character in GameObject.FindGameObjectsWithTag("Character"))
         {
-            if (character.GetComponent<CharBehaviour>().turnStage < 2) return false;
+            if (character.GetComponent<CharBehaviour>().turnStage < 5) return false;
         }
         return true;
     }

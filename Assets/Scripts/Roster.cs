@@ -56,7 +56,7 @@ public class Roster : MonoBehaviour
 
         UnitInfo tom = new UnitInfo { unitName = "Tom", weapon = "sword", m = 7, r = 2, max_hp = 30, dmg = 9, level=1, exp=0, str=5, def=4, spd=9, str_g=1, def_g=1, spd_g=2 };
         UnitInfo adam = new UnitInfo { unitName = "Adam", weapon = "lance", m = 8, r = 1, max_hp = 40, dmg = 8, level = 1, exp = 0, str = 4, def = 8, spd = 4, str_g = 1, def_g = 2, spd_g = 1 };
-        UnitInfo jarreth = new UnitInfo { unitName = "Jarreth", weapon = "axe", m = 6, r = 1, max_hp = 50, dmg = 30, level = 1, exp = 0, str = 10, def = 5, spd = 6, str_g = 2, def_g = 1, spd_g = 1 };
+        UnitInfo jarreth = new UnitInfo { unitName = "Jarreth", weapon = "axe", m = 6, r = 1, max_hp = 50, dmg = 10, level = 1, exp = 0, str = 10, def = 5, spd = 6, str_g = 2, def_g = 1, spd_g = 1 };
         fullUnitList.Add(tom);
         fullUnitList.Add(adam);
         fullUnitList.Add(jarreth);
