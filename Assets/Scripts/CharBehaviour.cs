@@ -18,6 +18,7 @@ public class CharBehaviour : MonoBehaviour
     private GameController GameController;
     public PanelOpener PanelOpener;
 
+    //public string specialMove = "Special";
     public string unitName;
     //public string weapon;
     private int m = 5;
@@ -110,7 +111,10 @@ public class CharBehaviour : MonoBehaviour
         }
     }
 
-
+    virtual public string GetSpecialLabel()
+    {
+        return "Special";
+    }
 
     virtual public void Special()
     {

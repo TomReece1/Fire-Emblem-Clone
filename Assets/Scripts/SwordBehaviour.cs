@@ -6,6 +6,10 @@ using static UnityEngine.GraphicsBuffer;
 
 public class SwordBehaviour : CharBehaviour
 {
+    public override string GetSpecialLabel()
+    {
+        return "Disengage";
+    }
 
     public override void Special()
     {
