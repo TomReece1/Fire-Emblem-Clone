@@ -108,31 +108,6 @@ public class CharBehaviour : MonoBehaviour
                 isMoving = false;
             }
         }
-
-/*        if (isSelected && Input.GetMouseButtonDown(0))
-        {
-            cameraComponent = GameObject.Find("Main Camera").GetComponent<Camera>();
-            Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 100)
-                && !EventSystem.current.IsPointerOverGameObject()
-                )
-            {
-                Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
-
-                if (turnStage == 0
-                && BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Tile").name == "BlueTile(Clone)"
-                )
-                {
-                    MoveMe();
-                }
-                else if (turnStage <= 1 && RoundedHitCoord.x == gameObject.transform.position.x && RoundedHitCoord.z == gameObject.transform.position.z) Wait();
-                else if (turnStage <= 1) Attack();
-            }
-
-
-        }*/
     }
 
 
@@ -187,20 +162,6 @@ public class CharBehaviour : MonoBehaviour
 
             BoardTiles.ClearAllTiles();
         }
-
-        //Should this be a char method or a button panel gameObject script method?
-        DisplayActions();
-    }
-
-    private void DisplayActions()
-    {
-        //Display 3 buttons:
-        //"Attack"
-        //"Special" or $"{SpecialMoveName}"
-        //"Wait"
-
-        //I think they should alway exist just be hidden to start with
-
     }
 
     private void MoveOneTile(Vector3 coord)

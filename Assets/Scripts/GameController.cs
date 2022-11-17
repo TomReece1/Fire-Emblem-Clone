@@ -102,12 +102,15 @@ public class GameController : MonoBehaviour
                             && (CharBehaviour.turnStage != 3 && CharBehaviour.turnStage != 4)
                             ))
                         {
-                            Debug.Log("You've tried to select a character");
+                            
                             selectedUnit = BoardTiles.CheckForObjectOnCoord(RoundedHitCoord, "Character");
                             CharBehaviour = selectedUnit.GetComponent<CharBehaviour>();
-                            CharBehaviour.turnStage = 1;
-                            CharBehaviour.ShowTiles();
-                            PanelOpener.UpdateStats(CharBehaviour);
+                            if (CharBehaviour.turnStage != 5)
+                            {
+                                CharBehaviour.turnStage = 1;
+                                CharBehaviour.ShowTiles();
+                                PanelOpener.UpdateStats(CharBehaviour);
+                            }
                         }
                         else if (
                             selectedUnit != null && CharBehaviour.turnStage == 1
@@ -117,10 +120,8 @@ public class GameController : MonoBehaviour
                             CharBehaviour.MoveMe();
                             DisplayActions();
                         }
-                        //else if (selectedUnit != null && CharBehaviour.turnStage <= 1 && RoundedHitCoord.x == selectedUnit.transform.position.x && RoundedHitCoord.z == selectedUnit.transform.position.z) CharBehaviour.Wait();
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && CharBehaviour.specialSelected) CharBehaviour.Special();
                         else if (selectedUnit != null && CharBehaviour.turnStage <= 4 && !CharBehaviour.specialSelected) CharBehaviour.Attack();
-                        //else if (selectedUnit != null && CharBehaviour.turnStage <= 1) CharBehaviour.Special();
                     }
                 }
 
@@ -142,7 +143,6 @@ public class GameController : MonoBehaviour
     {
         CharBehaviour.specialSelected = false;
         CharBehaviour.turnStage = 4;
-        //ActionButtonsPanel.SetActive(false);
         AttackButton.SetActive(false);
         SpecialButton.SetActive(false);
     }
@@ -151,7 +151,6 @@ public class GameController : MonoBehaviour
     {
         CharBehaviour.specialSelected = true;
         CharBehaviour.turnStage = 4;
-        //ActionButtonsPanel.SetActive(false);
         AttackButton.SetActive(false);
         SpecialButton.SetActive(false);
     }
@@ -159,7 +158,6 @@ public class GameController : MonoBehaviour
     public void SelectWait()
     {
         CharBehaviour.Wait();
-        
     }
 
     public void SelectBack()
