@@ -310,6 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d932ab0adca47b41a4e2e7231ddc64b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PanelOpener: {fileID: 0}
   unitName: 
   hp: 0
   max_hp: 0
@@ -322,10 +323,13 @@ MonoBehaviour:
   str_g: 0
   def_g: 0
   spd_g: 0
-  healthBar: {fileID: 3511305992080316971, guid: aa24acb8f12860c49a8a547091d6a2ad, type: 3}
+  isSelected: 0
+  specialSelected: 0
+  healthBar: {fileID: 7742398389686788516}
   speed: 1
   isMoving: 0
   turnStage: 0
+  originalCoord: {x: 0, y: 0, z: 0}
   MoveAudioSource: {fileID: 2833806160619329331}
   HitAudioSource: {fileID: 6376025111082158192}
 --- !u!82 &2833806160619329331
