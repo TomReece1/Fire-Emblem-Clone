@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -23,14 +24,10 @@ public class GameController : MonoBehaviour
     private GameObject WaitButton;
     private GameObject BackButton;
     private PanelOpener PanelOpener;
-
     private GameObject selectedUnit;
-
-    
 
     public int turn = 1;
     public bool playerTurn = true;
-
     public bool gameFrozen = false;
 
     public GameObject BlueUnitPrefab;
@@ -39,6 +36,7 @@ public class GameController : MonoBehaviour
     public GameObject BlueAxeUnitPrefab;
 
     private List<Vector3> SpawnVectors = new List<Vector3>();
+
     private Dictionary<string, GameObject> Classes = new Dictionary<string, GameObject>();
 
     // Start is called before the first frame update
@@ -94,6 +92,7 @@ public class GameController : MonoBehaviour
                         )
                     {
                         Vector3 RoundedHitCoord = new Vector3(Mathf.RoundToInt(hit.point.x), Mathf.RoundToInt(hit.point.y), Mathf.RoundToInt(hit.point.z));
+                     
                         //If you clicked a unit
                         //that was either the first unit click of the turn
                         //or this click was different than the current selectedUnit

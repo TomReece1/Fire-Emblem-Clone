@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - Character
   - Obstacle
+  - HoverTile
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.TerrainUtils;
 
 public class BoardTiles : MonoBehaviour
 {
@@ -9,11 +12,16 @@ public class BoardTiles : MonoBehaviour
     public GameObject WhiteTilePrefab;
     public GameObject ClearTilePrefab;
 
+
     //SloppyChief waz ere 2022
     //Squeeeeeepz waz ere 2022
     //Shez was ere 2022
     //Methods:
     //Highlight hovered tile
+
+   
+
+
 
     public GameObject CheckForEnemyOnCoord(Vector3 coord)
     {
@@ -63,5 +71,4 @@ public class BoardTiles : MonoBehaviour
             tile.GetComponent<TileDirections>().prevCoord = prevCoord;
         }
     }
-
 }

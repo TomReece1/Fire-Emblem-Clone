@@ -237,6 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e7b2c11b03335a4c860814db45b4ea1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PanelOpener: {fileID: 0}
   unitName: 
   hp: 0
   max_hp: 0
@@ -249,10 +250,13 @@ MonoBehaviour:
   str_g: 0
   def_g: 0
   spd_g: 0
+  isSelected: 0
+  specialSelected: 0
   healthBar: {fileID: 3511305992080316971, guid: aa24acb8f12860c49a8a547091d6a2ad, type: 3}
   speed: 1
   isMoving: 0
   turnStage: 0
+  originalCoord: {x: 0, y: 0, z: 0}
   MoveAudioSource: {fileID: 864996204857452050}
   HitAudioSource: {fileID: 2183978928260667361}
 --- !u!82 &864996204857452050
@@ -881,7 +885,7 @@ BoxCollider:
   m_GameObject: {fileID: 9037835600339056441}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
