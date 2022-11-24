@@ -325,7 +325,7 @@ MonoBehaviour:
   spd_g: 0
   isSelected: 0
   specialSelected: 0
-  healthBar: {fileID: 3511305992080316971, guid: aa24acb8f12860c49a8a547091d6a2ad, type: 3}
+  healthBar: {fileID: 7742398389686788516}
   speed: 1
   isMoving: 0
   turnStage: 0
