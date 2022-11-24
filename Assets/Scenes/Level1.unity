@@ -2725,6 +2725,7 @@ GameObject:
   - component: {fileID: 1334744230}
   - component: {fileID: 1334744229}
   - component: {fileID: 1334744233}
+  - component: {fileID: 1334744234}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -2827,6 +2828,19 @@ MonoBehaviour:
   RedTilePrefab: {fileID: 657080533417753975, guid: 9e0bd4b84c457cf4a9aa9f06a3d41ac9, type: 3}
   WhiteTilePrefab: {fileID: 5987572076457129051, guid: 4bec69562029ee24e85068dca6c1f4a0, type: 3}
   ClearTilePrefab: {fileID: 6736652622547921804, guid: 958612cd1822d074c9127f399a4eade9, type: 3}
+--- !u!114 &1334744234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334744228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ec3b88a0bd5cd43a8c6d3d50578d73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoverTileprefab: {fileID: 6736652622547921804, guid: 72d87b5d506601b479a307f63657b76b, type: 3}
 --- !u!1 &1419349600
 GameObject:
   m_ObjectHideFlags: 0
